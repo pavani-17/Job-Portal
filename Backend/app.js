@@ -10,6 +10,7 @@ var recruitmentRouter = require('./routes/recruiters');
 var loginRouter = require('./routes/login');
 var signupRouter = require('./routes/signup');
 var jobRouter = require('./routes/jobs');
+var applicationRouter = require('./routes/applications');
 
 // Connect to the database
 const url = 'mongodb://localhost:27017/jobPortal';
@@ -40,6 +41,7 @@ app.use('/recruiters', recruitmentRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/jobs', jobRouter);
+app.use('/application',applicationRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

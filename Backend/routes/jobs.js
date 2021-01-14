@@ -7,7 +7,7 @@ const Jobs = require('../models/jobs');
 const authenticate = require('../authenticate');
 secretKey = '16578-43790-38450-63720';
 
-router.get('/',(req, res, next) => {
+router.get('/',authenticate.verifyApplicant, (req, res, next) => {
     Jobs.find({})
     .then((jobs) => {
         res.statusCode = 200;
@@ -26,7 +26,7 @@ router.post('/', authenticate.verifyRecruiter, (req,res,next) => {
       res.json(job);
     }, (err) => next(err))
     .catch((err) => next(err));
-})
+});
 
 router.delete('/:jobId',authenticate.verifyRecruiter, (req, res, next) => {
     Jobs.findById(req.params.jobId)
