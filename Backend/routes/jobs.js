@@ -4,11 +4,12 @@ var bodyParser = require('body-parser');
 
 const router = express.Router();
 const Jobs = require('../models/jobs');
+const Recruiters = require('../models/recruiters');
 const authenticate = require('../authenticate');
 secretKey = '16578-43790-38450-63720';
 
 router.get('/',authenticate.verifyApplicant, (req, res, next) => {
-    Jobs.find({})
+    Jobs.find({}).populate('user_id')
     .then((jobs) => {
         res.statusCode = 200;
         res.setHeader('Content-Type','application/json');
