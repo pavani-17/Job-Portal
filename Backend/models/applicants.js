@@ -35,7 +35,8 @@ const ratingSchema = new Schema(
         },
         recruiterId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Recruiter'
+            ref: 'Recruiter',
+            unique: true
         }
     }
 );

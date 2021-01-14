@@ -29,11 +29,10 @@ var opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = secretKey;
 
-passport.use(new JwtStrategy(opts,
+passport.use('applicant_jwt',new JwtStrategy(opts,
     (jwt_payload, done) => {
-        console.log("JWT payload: ", jwt_payload);
         Applicants.findOne({_id: jwt_payload._id}, (err, applicant) => {
-            if (applicant) {
+            if (err) {
                 return done(err, false);
             }
             else if (applicant) {
@@ -46,4 +45,22 @@ passport.use(new JwtStrategy(opts,
     })
 );
 
-exports.verifyApplicant = passport.authenticate('jwt', {session: false});
+exports.verifyApplicant = passport.authenticate('applicant_jwt', {session: false});
+
+passport.use('recruiter_jwt',new JwtStrategy(opts,
+    (jwt_payload, done) => {
+        Recruiters.findOne({_id: jwt_payload._id}, (err, recruiter) => {
+            if (err) {
+                return done(err, false);
+            }
+            else if (recruiter) {
+                return done(null, recruiter);
+            }
+            else {
+                return done(null, false);
+            }
+        });
+    })
+);
+
+exports.verifyRecruiter = passport.authenticate('recruiter_jwt', {session: false});

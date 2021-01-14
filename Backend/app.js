@@ -6,8 +6,10 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 
 var applicantRouter = require('./routes/applicants');
+var recruitmentRouter = require('./routes/recruiters');
 var loginRouter = require('./routes/login');
 var signupRouter = require('./routes/signup');
+var jobRouter = require('./routes/jobs');
 
 // Connect to the database
 const url = 'mongodb://localhost:27017/jobPortal';
@@ -34,8 +36,10 @@ app.use(passport.initialize());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/applicants', applicantRouter);
+app.use('/recruiters', recruitmentRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
+app.use('/jobs', jobRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
