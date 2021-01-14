@@ -1,15 +1,24 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const Applicants = require('./models/applicants');
+const Recruiters = require('./models/recruiters');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken'); 
 
 secretKey = '16578-43790-38450-63720';
 
-passport.use(new LocalStrategy({usernameField: 'email'},Applicants.authenticate()));
-passport.serializeUser(Applicants.serializeUser());
-passport.deserializeUser(Applicants.deserializeUser());
+passport.use('applicant', new LocalStrategy({usernameField: 'email'},Applicants.authenticate()));
+passport.use('recruiter',new LocalStrategy({usernameField: 'email'},Recruiters.authenticate()));
+
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+if(user!=null)
+    done(null,user);
+});
 
 exports.getToken = function(val) {
     return jwt.sign(val, secretKey,

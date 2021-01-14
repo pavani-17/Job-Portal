@@ -1,14 +1,13 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-//var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('passport');
 
 var applicantRouter = require('./routes/applicants');
-var signupRouter = require('./routes/signup');
 var loginRouter = require('./routes/login');
+var signupRouter = require('./routes/signup');
 
 // Connect to the database
 const url = 'mongodb://localhost:27017/jobPortal';
