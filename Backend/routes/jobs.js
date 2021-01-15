@@ -87,6 +87,4 @@ router.get('/:recId',authenticate.verifyRecruiter, (req,res, next) => {
     .catch((err) => next(err));
 });
 
-
-
 module.exports = router;
