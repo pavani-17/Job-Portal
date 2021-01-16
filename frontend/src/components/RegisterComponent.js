@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row } from 'reactstrap';
 import {useForm} from 'react-hook-form';
+import axios from 'axios';
 
 export default class Register extends Component
 {
@@ -10,10 +11,10 @@ export default class Register extends Component
         this.state = {
             firstname: '',
             lastname: '',
-            type: '',
+            type: 'Select Type',
             email:'',
             password: '',
-            telnum: '',
+            phone: '',
             bio: '',
             education: [{education_name:'', education_start:'', education_end:''}],
             num_ed: 1,
@@ -29,8 +30,40 @@ export default class Register extends Component
         this.handleSkillChange = this.handleSkillChange.bind(this);
         this.incrementSkill = this.incrementSkill.bind(this);
         this.decrementSkill = this.decrementSkill.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    handleSubmit(event)
+    {
+        event.preventDefault();
+        if(this.state.type==="Applicant")
+        {
+            axios({
+                method: "POST",
+                url: "http://localhost:3000/signup/applicant",
+                data: this.state,
+                headers: {
+                    'Content-Type' : 'application/json',
+                }
+            }).then((response) => {
+                console.log(response);
+            }).catch((err) => console.log(err));
+        }
+        else if(this.state.type==="Recruiter")
+        {
+            axios({
+                method: "POST",
+                url: "http://localhost:3000/signup/recruiter",
+                data: this.state,
+                headers: {
+                    'Content-Type' : 'application/json',
+                }
+            }).then((response) => {
+                console.log(response);
+            }).catch((err) => console.log(err));
+        }
+        
+    }
 
     handleChange(event)
     {
@@ -164,16 +197,18 @@ export default class Register extends Component
                     {ed_list}
                 </div>
             );
-            var button1 = <Button md={4} onClick={this.incrementEducation}>Add one more education</Button>
-            var button2 = <Button md={4} onClick={this.decrementEducation}>Remove one education</Button>
-            var button3 = <Button md={4} onClick={this.incrementSkill}>Add one more skill field</Button>
-            var button4 = <Button md={4} onClick={this.decrementSkill}>Remove one skill field</Button>
+            var button1 = <Button Col md={{size:3, offset:3}} onClick={this.incrementEducation}>Add one more education</Button>
+            var button2 = <Button Col md={{size:3, offset:3}} onClick={this.decrementEducation}>Remove one education</Button>
+            var button3 = <Button Col md={{size:3, offset:3}} onClick={this.incrementSkill}>Add one more skill field</Button>
+            var button4 = <Button Col md={{size:3, offset:3}} onClick={this.decrementSkill}>Remove one skill field</Button>
             return(
                 <div className="applicant_form">
                    {val}
                    <FormGroup row>
                        {button1} {button2}
                    </FormGroup>
+                   <Label htmlFor="skills" md={2}>Skills</Label>
+
                     {ski_list}
                     <FormGroup row>
                        {button3} {button4}
@@ -198,9 +233,9 @@ export default class Register extends Component
             return(
                 <div className="recruiter_form">
                     <FormGroup row>
-                        <Label htmlFor="telnum" md={2}>Contact Number</Label>
+                        <Label htmlFor="phone" md={2}>Contact Number</Label>
                         <Col md={10}>
-                            <Input type="tel" id="telnum" name="telnum" placeholder="Contact Number" onChange={this.handleChange} />
+                            <Input type="tel" id="phone" name="phone" placeholder="Contact Number" onChange={this.handleChange} />
                         </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -223,7 +258,7 @@ export default class Register extends Component
         let temp_form = this.newPostForm(val);
         return(
             <div className="container">
-                <Form onSubmit={this.handleSubmit}>
+                <Form>
                     <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>
                         <Col md={10}>
@@ -251,7 +286,7 @@ export default class Register extends Component
                     <FormGroup row>
                         <Label htmlFor="type" md={2}>Type of User</Label>
                         <Col md={3}>
-                            <Input type="select" name="type" value={this.state.contactType} onChange={this.handleChange}>
+                            <Input type="select" name="type" value={this.state.type} onChange={this.handleChange}>
                                 <option selected disabled> Select Type</option> 
                                 <option>Applicant</option>
                                 <option>Recruiter</option>
@@ -259,6 +294,11 @@ export default class Register extends Component
                         </Col>
                     </FormGroup>
                     {temp_form}
+                    <FormGroup row>
+                        <Col md={{size:3, offset:3}}>
+                        <   Button  onClick={this.handleSubmit}>Submit</Button>
+                        </Col>
+                    </FormGroup>
                 </Form>
             </div>
         );

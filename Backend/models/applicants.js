@@ -6,16 +6,16 @@ require('mongoose-type-email');
 
 const educationSchema = new Schema(
     {
-    instName: {
+    education_name: {
         type: String,
         required: true
     },
-    startYear: {
+    education_start: {
         type: Number,
         integer: true,
         min: 0
     },
-    endYear: {
+    education_end: {
         type: Number,
         integer:  true,
         min: 0
@@ -23,21 +23,6 @@ const educationSchema = new Schema(
     },
     {
         timestamps: true
-    }
-);
-
-const ratingSchema = new Schema(
-    {
-        rating: {
-            type: Number,
-            min:0,
-            max:5
-        },
-        recruiterId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Recruiter',
-            unique: true
-        }
     }
 );
 
@@ -59,7 +44,6 @@ const applicantSchema = new Schema(
     },
     education: [educationSchema],
     skills: [String],
-    ratingCollection: [ratingSchema],
     rating: {
         type: Number,
         default: 0

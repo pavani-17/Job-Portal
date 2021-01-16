@@ -13,6 +13,7 @@ router.post('/applicant', (req, res, next) => {
   delete req.body.password;
   Applicants.register(new Applicants(req.body),password, (err, applicant) => {
     if(err) {
+      console.log(err);
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
       res.json({err: err});
@@ -29,6 +30,7 @@ router.post('/recruiter', (req, res, next) => {
   delete req.body.password;
   Recruiters.register(new Recruiters(req.body),password, (err, recruiter) => {
     if(err) {
+      console.log(err);
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
       res.json({err: err});

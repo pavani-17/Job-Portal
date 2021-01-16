@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import Register from './RegisterComponent';
+import Login from './LoginComponent';
+import axios from 'axios';
 
 export default class Main extends Component {
     constructor(){
@@ -8,16 +10,20 @@ export default class Main extends Component {
         this.state = {
             isLoggedIn : false,
             token: null,
-            user: null
+            user_id: null,
+            type: null
         }
+        this.attemptLogin = this.attemptLogin.bind(this);
     }
-    attemptLogin(token, user) {
-        localStorage.setItem("token",token);
-        this.setState = {
+    attemptLogin(token, user_id, type) {
+        this.setState({
             isLoggedIn : true,
             token: token,
-            user: user
-        };
+            user_id : user_id,
+            type : type
+        })
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        console.log(this.state);
     }    
     render()
     {
@@ -26,6 +32,7 @@ export default class Main extends Component {
                 <BrowserRouter>
                     <Switch>
                         <Route path='/register' component={Register} />
+        <Route path='/login' component={() => <Login attemptLogin={this.attemptLogin} />} />
                     </Switch>
                 </BrowserRouter>
             </div>
