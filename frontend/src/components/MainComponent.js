@@ -5,6 +5,7 @@ import Login from './LoginComponent';
 import axios from 'axios';
 import CreateJob from './CreateJob';
 import UserDashboard from './UserDashboard';
+import UserApplication from './UserApplications';
 
 export default class Main extends Component {
     constructor(){
@@ -49,6 +50,7 @@ export default class Main extends Component {
                         <Route path='/login' component={() => <Login attemptLogin={this.attemptLogin} />} />
                         <Route path='/createJob' component={CreateJob} />
                         <Route path='/userDashboard' component={UserDashboard} />
+                        <Route path='/userApplication' component={UserApplication} />
                     </Switch>
                 </BrowserRouter>
             </div>

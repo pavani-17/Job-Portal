@@ -36,6 +36,10 @@ const applicantSchema = new Schema(
         type: String,
         required: true
     },
+    num_applications:{
+        type: Number,
+        default: 0
+    },
     email : {
         type: mongoose.SchemaTypes.Email,
         required: true,
@@ -51,7 +55,7 @@ const applicantSchema = new Schema(
     },
     {
         timestamps: true
-    }
+    },
 );
 applicantSchema.plugin(passportLocalMongoose, {usernameField: 'email'});
 var Applicants = mongoose.model('Applicant',applicantSchema);

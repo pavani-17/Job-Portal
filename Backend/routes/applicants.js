@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 
 const router = express.Router();
 const Applicants = require('../models/applicants');
+const { verifyApplicant } = require('../authenticate');
 
 router.use(bodyParser.json());
 

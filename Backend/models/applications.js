@@ -20,6 +20,14 @@ var applicationScheme = new Schema({
     status: {
         type: String,
         required: true
+    },
+    rated: {
+        type: Boolean,
+        default: false
+    },
+    joining_date: {
+        type: Date,
+        default: null
     }
 });
 

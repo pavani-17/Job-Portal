@@ -78,7 +78,6 @@ export default class UserDashboard extends Component {
 
     toggleModal(event)
     {
-        console.log("Well I happen");
         if(this.state.isModalOpen === false)
         {
             var temp = event.target.id;
@@ -155,11 +154,8 @@ export default class UserDashboard extends Component {
         applications = applications.map((appl) => {
             return appl.job_id._id;
         });
-        console.log(applications);
         jobtemp = jobtemp.map((job) => {
-            console.log(job._id);
             var boolVar = applications.includes(job._id);
-            console.log(boolVar);
             if(boolVar=== true)
             {
                 job.state = "Applied";
@@ -167,13 +163,17 @@ export default class UserDashboard extends Component {
             }
             else
             {
-                if(job.rem_applictions === 0 || job.rem_positions === 0)
+                if(job.rem_applications === 0 || job.rem_positions === 0)
                 {
+                    console.log("I am here")
                     job.state = "Full";
                     return job;
                 }
-                job.state = "Apply";
-                return job;
+                else
+                {
+                    job.state = "Apply";
+                    return job;
+                }
             }
         });
         this.setState({
@@ -222,6 +222,15 @@ export default class UserDashboard extends Component {
     {
         let jobtemp = Array.from(this.state.displayed_arr);
         let data = jobtemp.map((job) => {
+            var button;
+            if(job.state === "Apply")
+            {
+                button = <Button id={job._id} onClick={this.toggleModal}>{job.state}</Button>
+            }
+            else
+            {
+                button = <Button id={job._id}>{job.state}</Button>
+            }
                 return(
                     <Row>
                     <Col>
@@ -237,7 +246,8 @@ export default class UserDashboard extends Component {
                       <CardText>Type of Job : {job.job_type}</CardText>
                       <CardText>{job.user_id.firstname} {job.user_id.lastname}</CardText>
                       <CardText>{job.user_id.email}</CardText>
-                      <Button id={job._id} onClick={this.toggleModal}>{job.state}</Button>
+                      <CardText>{job.rating}</CardText>
+                      {button}
                     </Card>
                   </Col>
                   </Row>
@@ -288,7 +298,6 @@ export default class UserDashboard extends Component {
                                 <option>5</option>
                                 <option>6</option>
                                 <option>7</option>
-
                             </Input>
                         </Col>
                     </FormGroup>

@@ -6,9 +6,9 @@ const router = express.Router();
 const Jobs = require('../models/jobs');
 const Recruiters = require('../models/recruiters');
 const authenticate = require('../authenticate');
+const Applications = require('../models/applications');
 
 router.get('/',authenticate.verifyApplicant, (req, res, next) => {
-    console.log("Blah");
     Jobs.find({}).populate('user_id')
     .then((jobs) => {
         res.statusCode = 200;
@@ -72,6 +72,39 @@ router.put('/:jobId', authenticate.verifyRecruiter, (req, res, next) => {
     .catch((err) => next(err));
     
 });
+
+router.post('/rateJob/:jobId', authenticate.verifyApplicant, (req, res, next) => {
+    Applications.findById(req.body.application_id)
+    .then((application)=> {
+        console.log(application);
+        if(application.rated === true)
+        {
+            err = new Error('You have already rated this job');
+            err.status = 403;
+            return next(err);
+        }
+        Jobs.findById(req.params.jobId)
+        .then((response) => {
+            response.num_rating = response.num_rating + 1;
+            response.sum_rating = response.sum_rating + parseInt(req.body.rating);
+            response.rating = response.sum_rating/ response.num_rating;
+            Jobs.findByIdAndUpdate(req.params.jobId, {$set: response}, {new: true})
+            .then((response) => {
+                Applications.findByIdAndUpdate(application._id, {rated:true})
+                .then(() =>
+                {
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(response);
+                },(err) => next(err))
+                .catch((err) => next(err))
+            }, (err) => next(err) )
+            .catch((err) => next(err))
+        }, (err) => next(err))
+        .catch((err) => next(err))
+    }, (err) => next(err))
+    .catch((err) => next(err))    
+})
 
 router.get('/:recId',authenticate.verifyRecruiter, (req,res, next) => {
     if(req.params.recId.toString() != req.user._id.toString())

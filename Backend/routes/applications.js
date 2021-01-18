@@ -38,17 +38,50 @@ router.get('/job/:jobId', verifyRecruiter, (req,res,next) => {
 
 router.post('/',verifyApplicant, (req, res, next) => {
     req.body.user_id = req.user._id;
-    Applications.create(req.body)
-    .then((application) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(application);
-    }, (err) => next(err))
-    .catch((err) => next(err));
+    Jobs.findById(req.body.job_id)
+    .then(response => {
+        console.log(response);
+        if(response.rem_applications == 0)
+        {
+            err = new Error('Already reached maximum number of applications');
+            err.status = 403;
+            return next(err);
+        }
+        Applicants.findById(req.user._id)
+        .then((result) => {
+            console.log(result.num_applications);
+            if(result.num_applications >= 10)
+            {
+                console.log("Here I am");
+                err = new Error('Already have 10 pending applications');
+                err.status = 403;
+                return next(err);
+            }
+            Applicants.findByIdAndUpdate(req.user._id, {$inc : {"num_applications" : 1}}, {new: true})
+            .then((appl) => 
+            {
+                Jobs.findByIdAndUpdate(req.body.job_id, {$inc: {"rem_applications" : -1}}, {new: true})
+                .then((job) => {
+                    Applications.create(req.body)
+                    .then((application) => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json(application);
+                    }, (err) => next(err))
+                    .catch((err) => next(err));
+                }, (err) => next(err))
+                .catch((err) => next(err))
+            }, (err) => next(err))
+            .catch((err) => next)
+
+        }, (err) => next(err))
+        .catch((err) => next(err))
+    },(err) => next(err))
+    .catch((err) => next)
 });
 
 router.get('/applicant/', verifyApplicant, (req, res, next) => {
-    Applications.find({user_id: req.user._id}).populate('job_id')
+    Applications.find({user_id: req.user._id}).populate({path :'job_id', populate:{path: 'user_id'}})
     .then((jobs) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
