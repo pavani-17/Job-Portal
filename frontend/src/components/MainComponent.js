@@ -6,6 +6,7 @@ import axios from 'axios';
 import CreateJob from './CreateJob';
 import UserDashboard from './UserDashboard';
 import UserApplication from './UserApplications';
+import UserProfile from './UserProfile';
 
 export default class Main extends Component {
     constructor(){
@@ -51,6 +52,7 @@ export default class Main extends Component {
                         <Route path='/createJob' component={CreateJob} />
                         <Route path='/userDashboard' component={UserDashboard} />
                         <Route path='/userApplication' component={UserApplication} />
+                        <Route path='/userProfile' component={UserProfile} />
                     </Switch>
                 </BrowserRouter>
             </div>
