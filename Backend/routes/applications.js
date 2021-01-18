@@ -10,6 +10,7 @@ const { verifyRecruiter, verifyApplicant } = require('../authenticate');
 
 router.use(bodyParser.json());
 
+
 router.get('/job/:jobId', verifyRecruiter, (req,res,next) => {
     Jobs.findById(req.params.jobId)
     .then((job) => {
@@ -46,14 +47,8 @@ router.post('/',verifyApplicant, (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.get('/applicant/:userId', verifyApplicant, (req, res, next) => {
-    if(req.params.userId != req.user._id)
-    {
-        err = new Error('You are not authorized to delete this job');
-        err.status = 403;
-        return next(err);
-    }
-    Applications.find({user_id: req.params.userId}).populate('job_id')
+router.get('/applicant/', verifyApplicant, (req, res, next) => {
+    Applications.find({user_id: req.user._id}).populate('job_id')
     .then((jobs) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');

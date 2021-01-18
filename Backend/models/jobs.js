@@ -9,30 +9,46 @@ const jobSchema = new Schema({
     skills: [String],
     max_applications: {
         type: Number,
-        integer: true
+        integer: true,
+        required: true
     },
     max_positions:{
         type: Number,
-        integer: true
+        integer: true,
+        required: true
+    },
+    rem_positions:{
+        type: Number,
+        integer:true,
+        required: true
+    },
+    rem_applications: {
+        type: Number,
+        integer: true,
+        required: true
     },
     date_posted:{
         type: Date,
         default: Date.now,
     },
     deadline:{
-        type: Date
+        type: Date,
+        required: true
     },
     job_type: {
-        type: String
+        type: String,
+        required: true
     },
     job_title: {
-        type: String
+        type: String,
+        required: true
     },
     duration : {
         type: Number,
         integer:true,
         min: 0,
-        max:6
+        max:6,
+        required: true
     },
     salary: {
         type:Number,

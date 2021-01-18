@@ -43,7 +43,7 @@ app.use('/recruiters', recruitmentRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/jobs', jobRouter);
-app.use('/application',applicationRouter);
+app.use('/applications',applicationRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -57,10 +57,11 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
+  console.log(err)
   res.status(err.status || 500);
   res.json({
     message: err.message,
-    error: err
+    error: err,
   });
 
 });

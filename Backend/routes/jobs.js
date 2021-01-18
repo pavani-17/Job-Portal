@@ -6,9 +6,9 @@ const router = express.Router();
 const Jobs = require('../models/jobs');
 const Recruiters = require('../models/recruiters');
 const authenticate = require('../authenticate');
-secretKey = '16578-43790-38450-63720';
 
 router.get('/',authenticate.verifyApplicant, (req, res, next) => {
+    console.log("Blah");
     Jobs.find({}).populate('user_id')
     .then((jobs) => {
         res.statusCode = 200;
@@ -20,6 +20,8 @@ router.get('/',authenticate.verifyApplicant, (req, res, next) => {
 
 router.post('/', authenticate.verifyRecruiter, (req,res,next) => {
     req.body.user_id = req.user._id;
+    req.body.rem_applications = req.body.max_applications;
+    req.body.rem_positions = req.body.max_positions;
     Jobs.create(req.body)
     .then((job) => {
       res.statusCode = 200;

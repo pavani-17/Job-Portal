@@ -121,6 +121,7 @@ export default class Register extends Component
             num_skill: t_num
         });
     }
+    
     decrementEducation(event)
     {
         if(this.state.num_ed === 0)
