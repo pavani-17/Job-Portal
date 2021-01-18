@@ -7,6 +7,7 @@ import CreateJob from './CreateJob';
 import UserDashboard from './UserDashboard';
 import UserApplication from './UserApplications';
 import UserProfile from './UserProfile';
+import RecruiterProfile from './RecruiterProfile';
 
 export default class Main extends Component {
     constructor(){
@@ -16,7 +17,7 @@ export default class Main extends Component {
             token: null,
             user_id: null,
             type: null
-        }
+        };
         this.attemptLogin = this.attemptLogin.bind(this);
     }
     attemptLogin(token, user_id, type) {
@@ -53,10 +54,11 @@ export default class Main extends Component {
                         <Route path='/userDashboard' component={UserDashboard} />
                         <Route path='/userApplication' component={UserApplication} />
                         <Route path='/userProfile' component={UserProfile} />
+                        <Route path='/recruiterProfile' component={RecruiterProfile} />
                     </Switch>
                 </BrowserRouter>
             </div>
-        )
+        );
     }
 
 }

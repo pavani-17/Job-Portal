@@ -263,19 +263,19 @@ export default class Register extends Component
                     <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>
                         <Col md={10}>
-                            <Input type="text" id="firstname" name="firstname" placeholder="First Name" onChange={this.handleChange}/>
+                            <Input type="text" id="firstname" name="firstname" placeholder="First Name" onChange={this.handleChange} value={this.state.firstname}/>
                         </Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label htmlFor="lastname" md={2}>Last Name</Label>
                         <Col md={10}>
-                            <Input type="text" id="lastname" name="lastname" placeholder="Last Name" onChange={this.handleChange}/>
+                            <Input type="text" id="lastname" name="lastname" placeholder="Last Name" onChange={this.handleChange} value={this.state.lastname}/>
                         </Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label htmlFor="email" md={2}>Email</Label>
                         <Col md={10}>
-                            <Input type="email" id="email" name="email" placeholder="someone@example.com" onChange={this.handleChange}/>
+                            <Input type="email" id="email" name="email" placeholder="someone@example.com" onChange={this.handleChange} value={this.state.email}/>
                         </Col>
                     </FormGroup>
                     <FormGroup row>
