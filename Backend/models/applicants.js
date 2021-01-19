@@ -51,6 +51,10 @@ const applicantSchema = new Schema(
     rating: {
         type: Number,
         default: 0
+    },
+    selected: {
+        type: Boolean,
+        default: false
     }
     },
     {

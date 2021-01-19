@@ -28,8 +28,15 @@ var applicationScheme = new Schema({
     joining_date: {
         type: Date,
         default: null
+    },
+    application_date :{
+        type: Date,
+        default: Date.now
+    },},
+    {
+        timestamps:true
     }
-});
+);
 
 applicationScheme.index({job_id:1, user_id:1, sop:0, status:0});
 var Applications = mongoose.model('Application',applicationScheme);

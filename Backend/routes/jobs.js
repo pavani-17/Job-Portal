@@ -7,6 +7,7 @@ const Jobs = require('../models/jobs');
 const Recruiters = require('../models/recruiters');
 const authenticate = require('../authenticate');
 const Applications = require('../models/applications');
+const Applicants = require('../models/applicants');
 
 router.get('/',authenticate.verifyApplicant, (req, res, next) => {
     Jobs.find({}).populate('user_id')
@@ -40,14 +41,45 @@ router.delete('/:jobId',authenticate.verifyRecruiter, (req, res, next) => {
             err.status = 403;
             return next(err);
         }
-        Jobs.findByIdAndRemove(req.params.jobId)
-        .then((job) => {
-            res.statusCode = 200;
-            res.setHeader('Content-Type','application/json');
-            res.json(job);
+        Applications.find({job_id : req.params.jobId}).populate('user_id')
+        .then((applications) => {
+            console.log("1");
+            applications.forEach((appl) => {
+                console.log("3");
+                if(appl.status.toString() !== "Selected" && appl.status.toString() !== "Rejected")
+                {
+                    console.log("4");
+                    Applicants.findByIdAndUpdate(appl.user_id._id, {$inc: {"num_applications" : -1}}, {new: true})
+                    .then((ex) => {
+                        console.log(ex)
+                    })
+                }
+                else if (appl.status.toString() === "Selected")
+                {
+                    console.log("4");
+                    Applicants.findByIdAndUpdate(appl.user_id._id, {"selected" : false}, {new: true})
+                    .then((ex) => {
+                        console.log(ex)
+                    })
+                }
+            });
+        })
+        .then(() => {
+            console.log("2");
+            Applications.deleteMany({job_id : req.params.jobId})
+            .then(() => {
+                Jobs.findByIdAndRemove(req.params.jobId)
+                .then((job) => {
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type','application/json');
+                    res.json(job);
+                }, (err) => next(err))
+                .catch((err) => next(err));
+            },(err) => next(err))
+            .catch((err) => next(err));
         }, (err) => next(err))
-        .catch((err) => next(err));
-    })
+        .catch((err) => next(err))
+    }, (err) => next(err))
     .catch((err) => next(err));
     
 });
@@ -61,6 +93,14 @@ router.put('/:jobId', authenticate.verifyRecruiter, (req, res, next) => {
             err.status = 403;
             return next(err);
         }
+        if((job.max_applications-job.rem_applications > req.body.max_applications) || (job.max_positions - job.rem_positions > req.body.max_positions))
+        {
+            err = new Error('Positions/Applications are less than the people already accepted/applied');
+            err.status = 500;
+            return next(err);
+        }
+        req.body.rem_applications = req.body.max_applications - job.max_applications + job.rem_applications;
+        req.body.rem_positions = req.body.max_positions - job.max_positions + job.rem_positions;
         Jobs.findByIdAndUpdate(req.params.jobId, { $set: req.body}, {new: true})
         .then((job) => {
             res.statusCode = 200;
@@ -106,14 +146,8 @@ router.post('/rateJob/:jobId', authenticate.verifyApplicant, (req, res, next) =>
     .catch((err) => next(err))    
 })
 
-router.get('/:recId',authenticate.verifyRecruiter, (req,res, next) => {
-    if(req.params.recId.toString() != req.user._id.toString())
-    {
-        err = new Error('You are not authorized for this operation');
-        err.status = 403;
-        return next(err);
-    }
-    Jobs.find({user_id:req.params.recId})
+router.get('/recruiter',authenticate.verifyRecruiter, (req,res, next) => {
+    Jobs.find({user_id:req.user._id})
     .then((jobs) => {
         res.statusCode = 200;
         res.setHeader('Content-Type','application/json');

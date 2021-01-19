@@ -7,12 +7,13 @@ const Applicants = require('../models/applicants');
 const Jobs = require('../models/jobs');
 const Applications = require('../models/applications');
 const { verifyRecruiter, verifyApplicant } = require('../authenticate');
+const { application } = require('express');
 
 router.use(bodyParser.json());
 
 
 router.get('/job/:jobId', verifyRecruiter, (req,res,next) => {
-    Jobs.findById(req.params.jobId)
+    Jobs.findById(req.params.jobId).populate('user_id')
     .then((job) => {
         if(job==null)
         {
@@ -20,10 +21,10 @@ router.get('/job/:jobId', verifyRecruiter, (req,res,next) => {
             err.status = 403;
             return next(err);
         }
-        if(job.user_id != req.user._id)
+        if(job.user_id._id.toString() !== req.user._id.toString())
         {
-            err = new Error('You are not authorized to delete this job');
-            err.status = 403;
+            err = new Error('You are not authorized to get these details');
+            err.status = 400;
             return next(err);
         }
         Applications.find({job_id: req.params.jobId}).populate('user_id')
@@ -54,6 +55,12 @@ router.post('/',verifyApplicant, (req, res, next) => {
             {
                 console.log("Here I am");
                 err = new Error('Already have 10 pending applications');
+                err.status = 403;
+                return next(err);
+            }
+            if(result.selected === true)
+            {
+                err = new Error('Already have a job');
                 err.status = 403;
                 return next(err);
             }
@@ -90,6 +97,94 @@ router.get('/applicant/', verifyApplicant, (req, res, next) => {
     .catch((err) => next(err));
 })
 
+// router.put('/:appId', verifyRecruiter, (req, res, next) => {
+//     if(req.body.status.toString() === "Rejected" || req.body.status.toString() === "Selected")
+//     {
+//         console.log("came here");
+//         Applications.findById(req.params.appId).populate('user_id')
+//         .then((application) => {
+//             Applicants.findByIdAndUpdate(application.user_id._id, {$inc : {"num_applications" : -1}});
+//         })
+//         .catch((err) => console.log(err));
+//     }
+//     if(req.body.status.toString() === "Selected")
+//     {
+//         console.log("came here")
+//         Applications.findById(req.params.appId)
+//         .then((application) => {
+//             Jobs.findByIdAndUpdate(application.job_id, {$inc: {"rem_positions": -1}});
+//         })
+//     }
+//     Applications.findByIdAndUpdate(req.params.appId,{status: req.body.status}, {new: true})
+//     .then((application) => {
+//         res.statusCode = 200;
+//         res.setHeader('Content-Type', 'application/json');
+//         res.json(application);
+//     }, (err) => next(err))
+//     .catch((err) => next(err))
+// })
 
+router.put('/:appId', verifyRecruiter, (req, res, next) => {
+    if(req.body.status.toString() === "Selected")
+    {
+        Applications.findById(req.params.appId).populate('user_id')
+        .then((application) => {
+            Applicants.findByIdAndUpdate(application.user_id._id, {num_applications : 0, selected: true})
+            .then(() => {
+                Applications.findById(req.params.appId)
+                .then((application) => {
+                    Jobs.findByIdAndUpdate(application.job_id, {$inc: {"rem_positions": -1}})
+                    .then(() => {
+                        var cur_date = Date.now();
+                        Applications.updateMany({user_id: application.user_id}, {status: "Rejected"})
+                        .then(() => {
+                            Applications.findByIdAndUpdate(req.params.appId,{$set: {"status": req.body.status, "joining_date": cur_date}}, {new: true})
+                            .then((application) => {
+                                res.statusCode = 200;
+                                res.setHeader('Content-Type', 'application/json');
+                                res.json(application);
+                            }, (err) => next(err))
+                            .catch((err) => next(err))
+                        }, (err) => next(err))
+                        .catch((err) => next(err))
+                    },(err) => next(err))
+                    .catch((err) => next(err))
+                },(err) => next(err))
+                .catch((err) => next(err))
+            },(err) => next(err))
+            .catch((err) => next(err))
+        },(err) => next(err))
+        .catch((err) => next(err));
+    }
+    else if(req.body.status.toString() === "Rejected")
+    {
+        console.log("came here");
+        Applications.findById(req.params.appId).populate('user_id')
+        .then((application) => {
+            Applicants.findByIdAndUpdate(application.user_id._id, {$inc : {"num_applications" : -1}})
+            .then(() => {
+                    Applications.findByIdAndUpdate(req.params.appId,{status: req.body.status}, {new: true})
+                    .then((application) => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json(application);
+                    }, (err) => next(err))
+                    .catch((err) => next(err))
+            },(err) => next(err))
+            .catch((err) => next(err))
+        },(err) => next(err))
+        .catch((err) => next(err))
+    }
+    else
+    {
+        Applications.findByIdAndUpdate(req.params.appId,{status: req.body.status}, {new: true})
+        .then((application) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(application);
+        }, (err) => next(err))
+        .catch((err) => next(err))
+    }
+})
 
 module.exports = router;
