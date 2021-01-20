@@ -133,18 +133,20 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
             .then(() => {
                 Applications.findById(req.params.appId)
                 .then((application) => {
-                    Jobs.findByIdAndUpdate(application.job_id, {$inc: {"rem_positions": -1}})
+                    Jobs.findByIdAndUpdate(application.job_id, {$inc: {"rem_positions": -1}}, {new: true})
                     .then((job) => {
                         var cur_date = Date.now();
                         Applications.updateMany({user_id: application.user_id}, {status: "Rejected"})
                         .then(() => {
                             Applications.findByIdAndUpdate(req.params.appId,{$set: {"status": req.body.status, "joining_date": cur_date}}, {new: true})
                             .then((application) => {
+                                console.log(job.rem_positions);
                                 if(job.rem_positions === 0)
                                 {
                                     var appl_status = ["Applied", "Shortlisted"];
-                                    Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"})
-                                    .then(() => {
+                                    Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"}, {new:true})
+                                    .then((x) => {
+                                        console.log("Value of x is"+x);
                                         res.statusCode = 200;
                                         res.setHeader('Content-Type', 'application/json');
                                         res.json(application);
@@ -152,6 +154,7 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
                                 }
                                 else
                                 {
+                                    console.log("I am dumb");
                                     res.statusCode = 200;
                                     res.setHeader('Content-Type', 'application/json');
                                     res.json(application);
