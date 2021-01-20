@@ -13,6 +13,8 @@ export default class UserDashboard extends Component {
             applications: '',
             displayed_arr: '',
             sortsalary: 0,
+            sortduration:0,
+            sortrating:0,
             job_type: 'Select Type',
             begin_sal:null,
             end_sal:null,
@@ -101,16 +103,17 @@ export default class UserDashboard extends Component {
     {
         var temp = this.state.displayed_arr;
         var name = event.target.name;
-        var t = this.state.sortsalary;
+        var id = event.target.id;
+        var t = this.state[name];
         temp.sort(function(a, b) {
-            if(a[name]!==undefined && b[name]!==undefined)
-                return (1-2*t)*(a[name] - b[name]);
+            if(a[id]!==undefined && b[id]!==undefined)
+                return (1-2*t)*(a[id] - b[id]);
             else
                 return 1;
         })
         this.setState({
             displayed_arr: temp,
-            sortsalary: !t
+            [name]: !t
         });
     }
 
@@ -235,7 +238,7 @@ export default class UserDashboard extends Component {
                     <Row>
                     <Col>
                     <Card body>
-                      <CardTitle tag="h5">{job.title}</CardTitle>
+                      <CardTitle tag="h5">{job.job_title}</CardTitle>
                       <CardText>Id : {job._id}</CardText>
                       <CardText>Skills : {job.skills}</CardText>
                       <CardText>Deadline : {job.deadline}</CardText>
@@ -257,15 +260,13 @@ export default class UserDashboard extends Component {
             <div className="container">
                 {data}
                 <FormGroup row>
-                <Col md={{size:6, offset:3}}> <Button row name="salary" onClick={this.sort}>Sort By Salary</Button></Col>
+                <Col md={{size:6, offset:3}}> <Button row name="sortsalary" id="salary" onClick={this.sort}>Sort By Salary</Button></Col>
                 </FormGroup>
                 <FormGroup row>
-                <Col md={{size:6, offset:3}}> <Button row name="duration"  onClick={this.sort}>Sort By Duration</Button></Col>
+                <Col md={{size:6, offset:3}}> <Button row name="sortduration" id="duration" onClick={this.sort}>Sort By Duration</Button></Col>
                 </FormGroup>
                 <FormGroup row>
-                <Col md={{size:6, offset:3}}> <Button row name="rating" onClick={this.sort}>Sort By Rating</Button></Col>
-                
-                
+                <Col md={{size:6, offset:3}}> <Button row name="sortrating" id="rating" onClick={this.sort}>Sort By Rating</Button></Col>
                 </FormGroup>
                 <Form>
                     <FormGroup row>

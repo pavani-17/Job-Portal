@@ -8,6 +8,9 @@ import UserDashboard from './UserDashboard';
 import UserApplication from './UserApplications';
 import UserProfile from './UserProfile';
 import RecruiterProfile from './RecruiterProfile';
+import RecruiterDashboard from './RecruiterDashboard';
+import ViewApplicant from './viewApplicants';
+import ViewEmployees from './viewEmployees';
 
 export default class Main extends Component {
     constructor(){
@@ -20,6 +23,7 @@ export default class Main extends Component {
         };
         this.attemptLogin = this.attemptLogin.bind(this);
     }
+    
     attemptLogin(token, user_id, type) {
         localStorage.setItem("token", token);
         localStorage.setItem("user_id", user_id);
@@ -44,6 +48,12 @@ export default class Main extends Component {
     }
     render()
     {
+
+        const viewApplicants = ({match}) => {
+            return(
+                <ViewApplicant job_id={match.params.jobId}/>
+            );
+        }
         return(
             <div className="App">
                 <BrowserRouter>
@@ -55,6 +65,9 @@ export default class Main extends Component {
                         <Route path='/userApplication' component={UserApplication} />
                         <Route path='/userProfile' component={UserProfile} />
                         <Route path='/recruiterProfile' component={RecruiterProfile} />
+                        <Route path='/recruiterDashboard' component={RecruiterDashboard} />
+                        <Route path='/recruiter/viewJob/:jobId' component={viewApplicants} />
+                        <Route path='/recruiterEmployees' component={ViewEmployees} />
                     </Switch>
                 </BrowserRouter>
             </div>

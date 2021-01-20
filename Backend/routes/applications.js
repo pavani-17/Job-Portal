@@ -134,15 +134,28 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
                 Applications.findById(req.params.appId)
                 .then((application) => {
                     Jobs.findByIdAndUpdate(application.job_id, {$inc: {"rem_positions": -1}})
-                    .then(() => {
+                    .then((job) => {
                         var cur_date = Date.now();
                         Applications.updateMany({user_id: application.user_id}, {status: "Rejected"})
                         .then(() => {
                             Applications.findByIdAndUpdate(req.params.appId,{$set: {"status": req.body.status, "joining_date": cur_date}}, {new: true})
                             .then((application) => {
-                                res.statusCode = 200;
-                                res.setHeader('Content-Type', 'application/json');
-                                res.json(application);
+                                if(job.rem_positions === 0)
+                                {
+                                    var appl_status = ["Applied", "Shortlisted"];
+                                    Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"})
+                                    .then(() => {
+                                        res.statusCode = 200;
+                                        res.setHeader('Content-Type', 'application/json');
+                                        res.json(application);
+                                    })
+                                }
+                                else
+                                {
+                                    res.statusCode = 200;
+                                    res.setHeader('Content-Type', 'application/json');
+                                    res.json(application);
+                                }
                             }, (err) => next(err))
                             .catch((err) => next(err))
                         }, (err) => next(err))
@@ -185,6 +198,21 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
         }, (err) => next(err))
         .catch((err) => next(err))
     }
+});
+
+router.get('/employees', verifyRecruiter, (req, res, next) => {
+    Jobs.find({user_id: req.user._id})
+    .then((jobs) => {
+        var job_ids = jobs.map((job) => {
+            return job._id;
+        });
+        Applications.find({status:"Selected", job_id: {"$in": job_ids}}).populate('user_id').populate('job_id')
+        .then((applications) => {
+            res.statusCode = 200;
+            res.setHeader('Content-type', 'application/json');
+            res.json(applications);
+        }, err => next(err))
+    }).catch(err => next(err))
 })
 
 module.exports = router;

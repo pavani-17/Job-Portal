@@ -25,6 +25,10 @@ var applicationScheme = new Schema({
         type: Boolean,
         default: false
     },
+    rated_user: {
+        type: Boolean,
+        default: false
+    }, 
     joining_date: {
         type: Date,
         default: null

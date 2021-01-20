@@ -52,6 +52,14 @@ const applicantSchema = new Schema(
         type: Number,
         default: 0
     },
+    num_rating: {
+        type: Number,
+        default: 0
+    },
+    sum_rating: {
+        type: Number,
+        default: 0
+    },
     selected: {
         type: Boolean,
         default: false

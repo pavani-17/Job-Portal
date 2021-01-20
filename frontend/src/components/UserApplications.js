@@ -73,7 +73,6 @@ export default class UserApplication extends Component {
             this.setState({
                 isModalOpen: false,
                 job_id: '',
-                sop:'',
                 rating: 'Select a Rating',
                 appl_id: ''
             });
@@ -110,12 +109,12 @@ export default class UserApplication extends Component {
                 button =  (
                         <Button id={application.job_id._id} name={application._id} onClick={this.toggleModal}>Rate</Button>
                 );
-            }
+            }            
             return(
             <Row>
                 <Col>
                     <Card body>
-                      <CardTitle tag="h5">{application.job_id.title}</CardTitle>
+                      <CardTitle tag="h5">{application.job_id.job_title}</CardTitle>
                       <CardText>Id : {application.job_id._id}</CardText>
                       <CardText>Skills : {application.job_id.skills}</CardText>
                       <CardText>Duration: {application.job_id.duration}</CardText>

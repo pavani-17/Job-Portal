@@ -41,42 +41,39 @@ router.delete('/:jobId',authenticate.verifyRecruiter, (req, res, next) => {
             err.status = 403;
             return next(err);
         }
-        Applications.find({job_id : req.params.jobId}).populate('user_id')
+        Applications.find({job_id : req.params.jobId, status:"Selected"}).populate('user_id')
         .then((applications) => {
-            console.log("1");
-            applications.forEach((appl) => {
-                console.log("3");
-                if(appl.status.toString() !== "Selected" && appl.status.toString() !== "Rejected")
-                {
-                    console.log("4");
-                    Applicants.findByIdAndUpdate(appl.user_id._id, {$inc: {"num_applications" : -1}}, {new: true})
-                    .then((ex) => {
-                        console.log(ex)
-                    })
-                }
-                else if (appl.status.toString() === "Selected")
-                {
-                    console.log("4");
-                    Applicants.findByIdAndUpdate(appl.user_id._id, {"selected" : false}, {new: true})
-                    .then((ex) => {
-                        console.log(ex)
-                    })
-                }
-            });
-        })
-        .then(() => {
-            console.log("2");
-            Applications.deleteMany({job_id : req.params.jobId})
+            console.log(applications);
+            var col_id = applications.map((appl) => {
+                return appl.user_id._id;
+            })
+            Applicants.updateMany({"_id" : {"$in" : col_id}}, {"selected": false})
             .then(() => {
-                Jobs.findByIdAndRemove(req.params.jobId)
-                .then((job) => {
-                    res.statusCode = 200;
-                    res.setHeader('Content-Type','application/json');
-                    res.json(job);
+                status_ar = ["Applied", "Shortlisted"];
+                Applications.find({job_id: req.params.jobId, status: {"$in": status_ar }}).populate('user_id')
+                .then((applications) => {
+                    var col_id = applications.map((appl) => {
+                        return appl.user_id._id;
+                    })
+                    Applicants.updateMany({"_id" : {"$in" : col_id}}, {$inc: {"num_applications" : -1}})
+                    .then(() => {
+                        Applications.deleteMany({job_id : req.params.jobId})
+                        .then(() => {
+                            Jobs.findByIdAndRemove(req.params.jobId)
+                            .then((job) => {
+                                res.statusCode = 200;
+                                res.setHeader('Content-Type','application/json');
+                                res.json(job);
+                            }, (err) => next(err))
+                            .catch((err) => next(err));
+                        },(err) => next(err))
+                        .catch((err) => next(err));
+                    }, err => next(err))
+                    .catch((err) => next(err))
                 }, (err) => next(err))
-                .catch((err) => next(err));
-            },(err) => next(err))
-            .catch((err) => next(err));
+                .catch((err) => next(err))
+            }, (err) => next(err))
+            .catch(err => next(err))
         }, (err) => next(err))
         .catch((err) => next(err))
     }, (err) => next(err))
