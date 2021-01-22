@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
-
+import NavbarUser from './NavbarUser';
 
 export default class UserDashboard extends Component {
     constructor()
@@ -45,14 +45,7 @@ export default class UserDashboard extends Component {
 
     handleClear(event)
     {
-        var temp = this.state.jobs;
-        this.setState({
-            begin_sal: null,
-            end_sal: null,
-            duration: 'Select Duration',
-            job_type: 'Select Type',
-            displayed_arr: temp
-        });
+        window.location.reload();
     }
     handleSubmit(event)
     {
@@ -258,6 +251,7 @@ export default class UserDashboard extends Component {
             });
         return(
             <div className="container">
+                <NavbarUser />
                 {data}
                 <FormGroup row>
                 <Col md={{size:6, offset:3}}> <Button row name="sortsalary" id="salary" onClick={this.sort}>Sort By Salary</Button></Col>

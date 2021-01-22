@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody, NavbarText } from 'reactstrap';
+import NavbarUser from './NavbarUser';
 
 export default class UserProfile extends Component
 {
@@ -12,12 +13,23 @@ export default class UserProfile extends Component
             firstname: '',
             lastname: '',
             email:'',
-            education: '',
+            education: [],
             num_ed: null,
-            skills: '',
+            skills: [],
             num_skill:null,
             edit: false,
-            skills_initial : ['C', 'C++', 'Javascript', 'Python']
+            skills_initial : ['C', 'C++', 'Javascript', 'Python'],
+            touched: {
+                firstname : false,
+                lastname: false,
+                email: false,
+                password: false,
+                select: false,
+                education: [{education_name: false, education_start: false, education_end: false}],
+                skills: [false],
+                bio: false,
+                phone: false
+            }
         }
         this.handleEdit = this.handleEdit.bind(this);
         this.incrementSkill = this.incrementSkill.bind(this);
@@ -30,6 +42,111 @@ export default class UserProfile extends Component
         this.handleEdChange = this.handleEdChange.bind(this);
         this.handleSkillChange = this.handleSkillChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.validateSubmit = this.validateSubmit.bind(this);
+        this.validate = this.validate.bind(this);
+    }
+
+    validateSubmit()
+    {
+        if(this.state.edit === false)
+        {
+            alert("Please click on edit button before changing");
+            return false;
+        }
+        var firstname = this.state.firstname;
+        if(firstname.length === 0)
+        {
+            alert("First name is required. Correct before submission");
+            return false;
+        }
+
+        var lastname = this.state.lastname;
+        if(lastname.length === 0)
+        {
+            alert("Last name is required. Correct before submission");
+            return false;
+        }
+
+        var email = this.state.email;
+        if(email.length === 0)
+        {
+            alert("email is required. Correct before submission");
+            return false;
+        }
+        const reg = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+.+(?:.[a-zA-Z0-9-]))$/
+        if(!reg.test(email))
+        {
+            alert("Make sure email format is correct");
+            return false;
+        }
+
+        var select = this.state.type;
+        if(select === 'Select Type')
+        {
+            alert("Select the type of user");
+            return false;
+        }
+
+        var i,n = this.state.num_ed;
+        for(i=0;i<n;i++)
+        {
+            if(this.state['education'][i]['education_name'].length === 0)
+            {
+                alert("Make sure all education fields have School/College");
+                return false;
+            }
+
+            if(this.state['education'][i]['education_start'] <= 0 && this.state['education'][i]['education_start'] !== '')
+            {
+                alert("All education start years must be positive");
+                return false;
+            }
+            
+            if(this.state['education'][i]['education_start'] === '')
+            {
+                alert("All education start years are required fields");
+                return false;
+            }
+
+            if(this.state['education'][i]['education_end'] <= 0 && this.state['education'][i]['education_end'] !== '')
+            {
+                alert("All education end years must be positive");
+                return false;
+            }
+        }
+        n = this.state.num_skill;
+        for(i=0;i<n;i++)
+        {
+            if(this.state['skills'][i] === 'Select a skill')
+            {
+                alert("Please remove unnecessary skill fields");
+                return false;
+            }
+        }
+    }
+
+    handleBlur = (field) => (evt) => {
+        this.setState({
+            touched : { ...this.state.touched, [field]: true}
+        }, console.log(this.state.touched));
+    }
+
+    handleBlurEd = (i, field) => (evt) => {
+        var temp = this.state.touched;
+        temp['education'][i][field] = true;
+        this.setState({
+            touched: temp
+        })
+        console.log(temp);
+    }
+
+    handleBlurSkill = (i) => (evt) => {
+        var temp = this.state.touched;
+        temp['skills'][i] = true;
+        this.setState({
+            touched: temp
+        })
+        console.log(temp);
     }
 
     handleEdit()
@@ -46,7 +163,7 @@ export default class UserProfile extends Component
 
     handleSubmit(event)
     {
-        if(this.state.edit === false)
+        if(this.validateSubmit() === false)
             return;
         var data = this.state;
         axios({
@@ -60,6 +177,78 @@ export default class UserProfile extends Component
             console.log(response);
         }).catch((err) => console.log(err));
         this.executeStuff();
+    }
+
+    validate(firstname, lastname, email)
+    {
+        var errors = {
+            firstname : '',
+            lastname : '',
+            password : '',
+            email : '',
+            select:'',
+            education:[],
+            skills:[]
+        };
+
+        if(this.state.touched.firstname && firstname.length === 0)
+        {
+            errors.firstname = 'First Name is required';
+        }
+
+        if(this.state.touched.lastname && lastname.length === 0)
+        {
+            errors.lastname = 'Last Name is required';
+        }
+
+        if(this.state.touched.email && email.length === 0)
+        {
+            errors.email = 'Email is required';
+        }
+        const reg = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+.+(?:.[a-zA-Z0-9-]))$/
+        if(this.state.touched.email && !reg.test(email) && email.length !== 0)
+        {
+            errors.email = 'Email is in wrong format'
+        }
+
+        var i,n = this.state.num_ed;
+        console.log(n);
+        for(i=0;i<n;i++)
+        {
+            errors.education.push({education_name:'', education_start: '', education_end:''});
+            if(this.state.touched['education'][i]['education_name'] && this.state['education'][i]['education_name'].length === 0)
+            {
+                errors.education[i]['education_name'] = 'School/College is required';
+            }
+
+            if(this.state.touched['education'][i]['education_start'] && this.state['education'][i]['education_start'] <= 0 && this.state['education'][i]['education_start'] !== '')
+            {
+                errors.education[i]['education_start'] = 'Education Start Year must be positive';
+            }
+            
+            if(this.state.touched['education'][i]['education_start'] && this.state['education'][i]['education_start'] === '')
+            {
+                errors.education[i]['education_start'] = 'Education Start Year is required';
+            }
+
+            if(this.state.touched['education'][i]['education_end'] && this.state['education'][i]['education_end'] <= 0 && this.state['education'][i]['education_end'] !== '')
+            {
+                errors.education[i]['education_end'] = 'Education End Year must be positive';
+            }
+        }
+
+        n = this.state.num_skill;
+        for(i=0;i<n;i++)
+        {
+            errors.skills.push('');
+            console.log(this.state.touched['skills'][i]);
+            if(this.state.touched['skills'][i] && this.state['skills'][i] === 'Select a skill')
+            {
+                errors['skills'][i] = "Skill is compulsory. Please remove the skill if not required"
+            }
+        }
+        console.log(errors);
+        return errors;
     }
 
     handleChange(event)
@@ -76,6 +265,8 @@ export default class UserProfile extends Component
     };
 
     handleEdChange(event) {
+        if(this.state.edit === false)
+            return;
         const target = event.target;
         const value = target.value;
         var name = target.name;
@@ -90,6 +281,8 @@ export default class UserProfile extends Component
     }
 
     handleSkillChange(event) {
+        if(this.state.edit === false)
+            return;
         const target = event.target;
         const value = target.value;
         var name = target.name;
@@ -106,10 +299,13 @@ export default class UserProfile extends Component
         {
             var t_num = this.state.num_skill+1;
             var temp = this.state.skills;
-            temp.push('');
+            var temp1 = this.state.touched;
+            temp1['skills'].push(false);
+            temp.push('Select a skill');
             this.setState({
                 skills: temp,
-                num_skill: t_num
+                num_skill: t_num,
+                touched: temp1
             });
         }
     }
@@ -120,10 +316,14 @@ export default class UserProfile extends Component
         {
             var t_num = this.state.num_ed+1;
             var temp = this.state.education;
+            var temp1 = this.state.touched;
+
+            temp1['education'].push({education_name: false, education_start: false, education_end: false});
             temp.push({education_name:'', education_start:'', education_end:''});
             this.setState({
                 education: temp,
-                num_ed: t_num
+                num_ed: t_num,
+                touched: temp1
             });
         }
     }
@@ -136,12 +336,16 @@ export default class UserProfile extends Component
             {
                 return;
             }
+            var temp1 = this.state.touched;
+            temp1.education.pop();
             var t_num = this.state.num_ed-1;
             var temp = this.state.education;
             temp.pop();
+            
             this.setState({
                 education: temp,
-                num_ed: t_num
+                num_ed: t_num,
+                touched: temp1
             })
         }
     }
@@ -156,10 +360,13 @@ export default class UserProfile extends Component
             }
             var t_num = this.state.num_skill - 1;
             var temp = this.state.skills;
+            var temp1 = this.state.touched;
+            temp1.skills.pop();
             temp.pop();
             this.setState({
                 skills: temp,
-                num_skill: t_num
+                num_skill: t_num,
+                touched: temp1
             });
         }
     }
@@ -183,6 +390,21 @@ export default class UserProfile extends Component
             console.log(temp1)
             var temp2 = temp.skills;
             temp2 = Array.from(temp2);
+            var i, n1=temp1.length;
+            var temp3 = this.state.touched;
+            temp3['education'] = [];
+            for(i=0;i<n1;i++)
+            {
+                temp3['education'].push({education_name: false, education_start: false, education_end: false});
+                if(temp1[i].education_end === null)
+                    temp1[i].education_end = '';
+            }
+            n1 = temp2.length;
+            temp3['skills'] = [];
+            for(i=0;i<n1;i++)
+            {
+                temp3['skills'].push(false);
+            }
             this.setState({
                 firstname : data.firstname,
                 lastname: data.lastname,
@@ -191,6 +413,7 @@ export default class UserProfile extends Component
                 num_ed: temp1.length,
                 skills: temp2,
                 num_skill: temp2.length,
+                touched: temp3,
                 edit: false
             });
         })
@@ -212,8 +435,10 @@ export default class UserProfile extends Component
                 <option key={i} value={item}>{item}</option>
             )
         }, this);
+        skills_list.push(<option selected disabled>Select a skill</option>)
         var temp_list = [];
         var i;
+        var errors = this.validate(this.state.firstname, this.state.lastname, this.state.email);
         for(i=0;i<this.state.num_ed;i++)
         {
             let name_temp = i +"education_name";
@@ -223,9 +448,12 @@ export default class UserProfile extends Component
                 <FormGroup row>
                     <Label htmlFor="education" md={2}></Label>
                     <Col md={10}>
-                        <Input type="text" id={name_temp} name={name_temp} placeholder="School/College" value={this.state.education[i].education_name} onChange={this.handleEdChange}/>
-                        <Input type="number" id={start_temp} name={start_temp} value={this.state.education[i].education_start} onChange={this.handleEdChange}/>
-                        <Input type="number" id={end_temp} name={end_temp} value={this.state.education[i].education_end} onChange={this.handleEdChange}/>
+                        <Input type="text" id={name_temp} name={name_temp} placeholder="School/College" value={this.state.education[i].education_name} onChange={this.handleEdChange} onBlur={this.handleBlurEd(i, "education_name")} valid={errors.education[i]['education_name'] === ''} invalid={errors.education[i]['education_name'] !== ''}/>
+                        <FormFeedback>{errors.education[i]['education_name']}</FormFeedback>
+                        <Input type="number" id={start_temp} name={start_temp} value={this.state.education[i].education_start} onChange={this.handleEdChange} onBlur={this.handleBlurEd(i, "education_start")} valid={errors.education[i]['education_start'] === ''} invalid={errors.education[i]['education_start'] !== ''}/>
+                        <FormFeedback>{errors.education[i]['education_start']}</FormFeedback>
+                        <Input type="number" id={end_temp} name={end_temp} value={this.state.education[i].education_end} onChange={this.handleEdChange}  onBlur={this.handleBlurEd(i, "education_end")} valid={errors.education[i]['education_end'] === ''} invalid={errors.education[i]['education_end'] !== ''}/>
+                        <FormFeedback>{errors.education[i]['education_end']}</FormFeedback>
                     </Col>
                 </FormGroup>
             );
@@ -237,7 +465,8 @@ export default class UserProfile extends Component
                 <FormGroup row>
                     <Label htmlFor="skills" md={2}></Label>
                     <Col md={3}>
-                        <Input type="select" id={i} name={i} value={this.state.skills[i]} onChange={this.handleSkillChange}>{skills_list}</Input>
+                    <Input type="select" id={i} name={i} value={this.state.skills[i]} onChange={this.handleSkillChange} onBlur={this.handleBlurSkill(i)} valid={errors.skills[i] === ''} invalid={errors.skills[i] !== ''}>{skills_list}</Input>
+                    <FormFeedback>{errors.skills[i]}</FormFeedback>
                     </Col>
                 </FormGroup>
             );
@@ -256,25 +485,30 @@ export default class UserProfile extends Component
         var button4 = <Button Col md={{size:3, offset:3}} onClick={this.decrementSkill}>Remove one skill field</Button>
         return(
             <div className="container">
+                <NavbarUser />
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>
                         <Col md={10}>
-                            <Input type="text" id="firstname" name="firstname" placeholder="First Name" onChange={this.handleChange} value={this.state.firstname}/>
+                            <Input type="text" id="firstname" name="firstname" placeholder="First Name" required onChange={this.handleChange} value={this.state.firstname} onBlur={this.handleBlur('firstname')} valid={errors.firstname === ''} invalid={errors.firstname !== ''} />
+                            <FormFeedback>{errors.firstname}</FormFeedback>
                         </Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label htmlFor="lastname" md={2}>Last Name</Label>
                         <Col md={10}>
-                            <Input type="text" id="lastname" name="lastname" placeholder="Last Name" onChange={this.handleChange} value={this.state.lastname}/>
+                            <Input type="text" id="lastname" name="lastname" placeholder="Last Name" onChange={this.handleChange} value={this.state.lastname} onBlur={this.handleBlur('lastname')} valid={errors.lastname === ''} invalid={errors.lastname !== ''}/>
+                            <FormFeedback>{errors.lastname}</FormFeedback>
                         </Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label htmlFor="email" md={2}>Email</Label>
                         <Col md={10}>
-                            <Input type="email" id="email" name="email" placeholder="someone@example.com" onChange={this.handleChange} value={this.state.email}/>
+                            <Input type="email" id="email" name="email" placeholder="someone@example.com" onChange={this.handleChange} value={this.state.email}  onBlur={this.handleBlur('email')} valid={errors.email === ''} invalid={errors.email !== ''}/>
+                            <FormFeedback>{errors.email}</FormFeedback>
                         </Col>
                     </FormGroup>
+
                     {val}
                     <FormGroup row>
                         <Col md={{size:3, offset:3}}>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
-
+import NavbarRecruitment from './NavbarRecruiter';
 export default class Recruitment extends Component
 {
     constructor()
@@ -101,6 +101,7 @@ export default class Recruitment extends Component
     {
         return(
             <div className="container">
+                <NavbarRecruitment />
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>

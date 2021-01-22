@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import NavbarRecruitment from './NavbarRecruiter';
 
 export default class ViewApplicant extends Component
 {
@@ -166,6 +167,7 @@ export default class ViewApplicant extends Component
         })
         return(
             <div className="container">
+                <NavbarRecruitment />
                 {temp_appl}
                 <FormGroup row>
                 <Col md={{size:6, offset:3}}> <Button row name="name" id="name" onClick={this.sortname}>Sort By Name</Button></Col>

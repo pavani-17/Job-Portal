@@ -146,15 +146,20 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
                                     var appl_status = ["Applied", "Shortlisted"];
                                     Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"}, {new:true})
                                     .then((x) => {
-                                        console.log("Value of x is"+x);
-                                        res.statusCode = 200;
-                                        res.setHeader('Content-Type', 'application/json');
-                                        res.json(application);
-                                    })
+                                        appl_id = x.map((app) => {return app.user_id});
+                                        Applicants.updateMany({_id: {"$in": appl_id}}, {$inc: {"num_applications": -1}})
+                                        .then(()=> {
+                                            console.log("Value of x is"+x);
+                                            res.statusCode = 200;
+                                            res.setHeader('Content-Type', 'application/json');
+                                            res.json(application);
+                                        }, (err) => next(err))
+                                        .catch((err) => next(err));
+                                    }, (err) => next(err))
+                                    .catch((err) => next(err));
                                 }
                                 else
                                 {
-                                    console.log("I am dumb");
                                     res.statusCode = 200;
                                     res.setHeader('Content-Type', 'application/json');
                                     res.json(application);

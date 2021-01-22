@@ -11,6 +11,8 @@ import RecruiterProfile from './RecruiterProfile';
 import RecruiterDashboard from './RecruiterDashboard';
 import ViewApplicant from './viewApplicants';
 import ViewEmployees from './viewEmployees';
+import PrivateRoute from './PrivateRoute';
+import Logout from './LogOutComponent';
 
 export default class Main extends Component {
     constructor(){
@@ -22,6 +24,7 @@ export default class Main extends Component {
             type: null
         };
         this.attemptLogin = this.attemptLogin.bind(this);
+        this.attemptLogout = this.attemptLogout.bind(this);
     }
     
     attemptLogin(token, user_id, type) {
@@ -35,7 +38,24 @@ export default class Main extends Component {
             type : type
         })
         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    }    
+    }   
+
+    attemptLogout()
+    {
+        if(localStorage && localStorage.token && localStorage.user_id && localStorage.type)
+        {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user_id");
+            localStorage.removeItem("user_id");
+        }
+        this.setState({
+            isLoggedIn: false,
+            token: null,
+            type: null,
+            user_id: null
+        });
+    }
+
     componentWillMount() {
         console.log("This will print");
         if(localStorage && localStorage.token)
@@ -50,24 +70,53 @@ export default class Main extends Component {
     {
 
         const viewApplicants = ({match}) => {
+            if(this.state.isLoggedIn === false || this.state.type !== "Recruiter")
+            {
+                return(
+                    <Redirect to="/login" />
+                )
+            }
             return(
                 <ViewApplicant job_id={match.params.jobId}/>
             );
         }
+
         return(
             <div className="App">
                 <BrowserRouter>
                     <Switch>
                         <Route path='/register' component={Register} />
                         <Route path='/login' component={() => <Login attemptLogin={this.attemptLogin} />} />
-                        <Route path='/createJob' component={CreateJob} />
-                        <Route path='/userDashboard' component={UserDashboard} />
-                        <Route path='/userApplication' component={UserApplication} />
-                        <Route path='/userProfile' component={UserProfile} />
-                        <Route path='/recruiterProfile' component={RecruiterProfile} />
-                        <Route path='/recruiterDashboard' component={RecruiterDashboard} />
+                        <Route path='/recruiter/createJob'  
+                            render={
+                                (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Recruiter" path="/recruiter/createJob"  hasProps={false} component={CreateJob}/>
+                            }/>
+                        <Route path='/applicant/dashboard' 
+                            render={
+                                (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Applicant" path="/applicant/dashboard" hasProps={false} component={UserDashboard} />
+                            }/>
+                        <Route path='/applicant/applications' 
+                            render={
+                                (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Applicant" path="/applicant/applications" hasProps={false} component={UserApplication} />
+                            }/>
+                        <Route path='/applicant/profile' 
+                            render={
+                                (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Applicant" path="/applicant/profile" hasProps={false} component={UserProfile} />
+                            }/>
+                        <Route path='/recruiter/profile' 
+                            render={
+                                (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Recruiter" path="/recruiter/profile" hasProps={false} component={RecruiterProfile} />
+                            }/>
+                        <Route path='/recruiter/dashboard' 
+                            render={
+                                (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Recruiter" path="/recruiter/dashboard" hasProps={false} component={RecruiterDashboard} />
+                            }/>
                         <Route path='/recruiter/viewJob/:jobId' component={viewApplicants} />
-                        <Route path='/recruiterEmployees' component={ViewEmployees} />
+                        <Route path='/recruiter/employees'
+                            render={
+                                (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Recruiter" path="/recruiter/employees" hasProps={false} component={ViewEmployees} />
+                            }/>
+                        <Route path='/logout' component={() => <Logout type={this.state.type} attemptLogout={this.attemptLogout}/>} />
                     </Switch>
                 </BrowserRouter>
             </div>

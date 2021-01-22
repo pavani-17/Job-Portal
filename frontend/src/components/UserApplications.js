@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody, NavbarText } from 'reactstrap';
+import NavbarUser from './NavbarUser';
 
 export default class UserApplication extends Component {
     constructor()
@@ -131,6 +132,7 @@ export default class UserApplication extends Component {
         })
         return(
             <div className="container">
+                <NavbarUser />
                 {appl_temp}
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader toggle={this.toggleModal}>Rate</ModalHeader>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter, Link} from 'react-router-dom';
 import axios from 'axios';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import NavbarRecruitment from './NavbarRecruiter';
 
 export default class RecruiterDashboard extends Component
 {
@@ -151,6 +152,7 @@ export default class RecruiterDashboard extends Component
         console.log(this.state);
         return(
             <div className="container">
+                <NavbarRecruitment />
                 {temp_job}
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader toggle={this.toggleModal}>Apply</ModalHeader>

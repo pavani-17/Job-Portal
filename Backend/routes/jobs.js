@@ -90,7 +90,7 @@ router.put('/:jobId', authenticate.verifyRecruiter, (req, res, next) => {
             err.status = 403;
             return next(err);
         }
-        if((job.max_applications-job.rem_applications > req.body.max_applications) || (job.max_positions - job.rem_positions > req.body.max_positions))
+        if((job.max_applications-job.rem_applications > req.body.max_applications) || (job.max_positions - job.rem_positions >= req.body.max_positions))
         {
             err = new Error('Positions/Applications are less than the people already accepted/applied');
             err.status = 500;
