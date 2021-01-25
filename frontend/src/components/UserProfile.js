@@ -20,6 +20,8 @@ export default class UserProfile extends Component
             edit: false,
             ex_skill:'',
             skills_initial : ['C', 'C++', 'Javascript', 'Python'],
+            selectedFile: null,
+            selectedFile_r : null,
             touched: {
                 firstname : false,
                 lastname: false,
@@ -195,6 +197,76 @@ export default class UserProfile extends Component
         })
         this.executeStuff();
     }
+
+    onFileChange = event => { 
+     
+        // Update the state 
+        this.setState({ selectedFile: event.target.files[0] }); 
+       
+      }; 
+
+      onFileChange_r = event => { 
+     
+        // Update the state 
+        this.setState({ selectedFile_r: event.target.files[0] }); 
+       
+      }; 
+       
+      // On file upload (click the upload button) 
+      onFileUpload = (event) => { 
+        event.preventDefault();
+       
+        if(this.state.selectedFile === null)
+        {
+            alert("Please select a valid file");
+            return;
+        }
+        const formData = new FormData(); 
+       
+        formData.append( 
+          "imageFile", this.state.selectedFile
+        ); 
+              
+        axios({
+            method: "POST",
+            url: "http://localhost:3000/applicants/uploadProfilePicture",
+            data: formData,
+            config: {
+            headers: {
+                'Content-Type' : 'multipart/formdata'
+            }}
+
+        }).then((response) => console.log(response))
+        .catch((err) => console.log(err))
+      };
+      
+      onFileUpload_r = (event) => { 
+        event.preventDefault();
+       
+        if(this.state.selectedFile_r === null)
+        {
+            alert("Please select a valid file");
+            return;
+        }
+        const formData = new FormData(); 
+       
+        formData.append( 
+          "textFile", this.state.selectedFile_r
+        ); 
+              
+        axios({
+            method: "POST",
+            url: "http://localhost:3000/applicants/uploadResume",
+            data: formData,
+            config: {
+            headers: {
+                'Content-Type' : 'multipart/formdata'
+            }}
+
+        }).then((response) => console.log(response))
+        .catch((err) => console.log(err))
+      }; 
+  
 
     validate(firstname, lastname, email)
     {
@@ -545,17 +617,35 @@ export default class UserProfile extends Component
                         </Col>
                     </FormGroup>
                     <FormGroup row>
-                       <Input type="text" name="ex_skill" value={this.state.ex_skill} onChange={this.handleChange} ></Input>
+                    <Label htmlFor="email" md={2}>Add to dropdown</Label>
+                    <Col md={10}>
+                        <Input type="text" name="ex_skill" value={this.state.ex_skill} onChange={this.handleChange} ></Input>
                        <Button onClick={this.extraSkill}>Add skill to dropdown</Button>
+                    </Col>
+                       
                    </FormGroup>
+                   <FormGroup row>
+                        <Label htmlFor="resume" md={2}>Resume</Label>
+                        <Col md={10}>
+                            <Input type="file" name="textFile" onChange={this.onFileChange_r}/>
+                            <Button onClick={this.onFileUpload_r}>Upload!</Button>
+                        </Col>
+                    </FormGroup>
                     <FormGroup row>
-                        <Col md={{size:3, offset:3}}>
+                        <Label htmlFor="profilePic" md={2}>Profile Picture</Label>
+                        <Col md={10}>
+                            <Input type="file" name="imageFile" onChange={this.onFileChange} />
+                            <Button onClick={this.onFileUpload}>Upload!</Button>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Col md={{size:2, offset:2}}>
                         < Button  onClick={this.handleEdit}>Edit</Button>
                         </Col>
-                        <Col md={{size:3, offset:3}}>
+                        <Col md={{size:2, offset:2}}>
                         < Button  onClick={this.handleClear}>Clear</Button>
                         </Col>
-                        <Col md={{size:3, offset:3}}>
+                        <Col md={{size:2, offset:2}}>
                         < Button  onClick={this.handleSubmit}>Submit</Button>
                         </Col>
                     </FormGroup>

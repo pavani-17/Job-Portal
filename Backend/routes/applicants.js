@@ -9,14 +9,6 @@ const Applicants = require('../models/applicants');
 const { verifyApplicant, verifyRecruiter } = require('../authenticate');
 const Applications = require('../models/applications');
 
-const imageFileFilter = (req, file, cb) => {
-    if(!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-        return cb(new Error('You can upload only image files!'), false);
-    }
-    cb(null, true);
-};
-
-const upload = multer({ dest: "uploads/" });
 
 router.route('/')
 .get(verifyApplicant, (req,res,next) => {
@@ -67,13 +59,7 @@ router.route('/rateApplicant')
         .catch((err) => next(err))
     }, (err) => next(err))
     .catch((err) => next(err))    
-})
-router.route("/uploadProfilePicture")
-.post(upload.single('imageFile'), (req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json(req.file);
-})
+});
 
 
 module.exports = router;

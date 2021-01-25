@@ -63,6 +63,14 @@ const applicantSchema = new Schema(
     selected: {
         type: Boolean,
         default: false
+    },
+    resume: {
+        type: Boolean,
+        default: false
+    },
+    profilePic: {
+        type: Boolean,
+        default: true
     }
     },
     {

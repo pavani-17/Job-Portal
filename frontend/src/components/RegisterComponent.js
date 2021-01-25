@@ -32,8 +32,7 @@ export default class Register extends Component
                 skills: [false],
                 bio: false,
                 phone: false
-            }
-        }
+            }        }
         this.handleChange = this.handleChange.bind(this);
         this.newPostForm = this.newPostForm.bind(this);
         this.handleEdChange = this.handleEdChange.bind(this);
@@ -518,18 +517,6 @@ export default class Register extends Component
                        <Input type="text" name="ex_skill" value={this.state.ex_skill} onChange={this.handleChange} ></Input>
                        <Button onClick={this.extraSkill}>Add skill to dropdown</Button>
                    </FormGroup>
-                   <FormGroup row>
-                        <Label htmlFor="profilePic" md={2}>Profile Picture</Label>
-                        <Col md={10}>
-                            <Input type="file"/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup row>
-                        <Label htmlFor="resume" md={2}>Resume</Label>
-                        <Col md={10}>
-                            <Input type="file"/>
-                        </Col>
-                    </FormGroup>
                 </div>
             );
         }

@@ -12,6 +12,8 @@ var loginRouter = require('./routes/login');
 var signupRouter = require('./routes/signup');
 var jobRouter = require('./routes/jobs');
 var applicationRouter = require('./routes/applications');
+var uploadResume = require('./routes/uploadResume');
+var uploadProfilePic = require('./routes/uploadProfilePic');
 
 const PORT = 4000;
 
@@ -47,6 +49,8 @@ app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/jobs', jobRouter);
 app.use('/applications',applicationRouter);
+app.use('/applicants/uploadResume', uploadResume);
+app.use('/applicants/uploadProfilePicture', uploadProfilePic);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
