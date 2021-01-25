@@ -299,7 +299,7 @@ export default class Register extends Component
                 window.location.replace("/login");
             }).catch((error) => {
                 alert(JSON.stringify(error.response));
-            });
+            })
         }
         else if(this.state.type==="Recruiter")
         {
@@ -314,9 +314,9 @@ export default class Register extends Component
                 console.log(response);
                 alert("Your registration is successful");
                 window.location.replace("/login");
-            }).catch((res) => {
-                console.log(res);
-            });
+            }).catch((error) => {
+                alert(JSON.stringify(error.response));
+            })
         }
         
     }

@@ -119,7 +119,9 @@ export default class RecruiterDashboard extends Component
             alert("Edit successful");
             this.executeStuff();
         })
-        .catch((err) => console.log(err));
+        .catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
     }
 
     executeStuff()

@@ -100,8 +100,8 @@ export default class UserDashboard extends Component {
             this.executeStuff();
             this.toggleModal();
         })
-        .catch((err) => {
-            console.log(err);
+        .catch((error) => {
+            alert(JSON.stringify(error.response));
         })
     }
 

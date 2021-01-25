@@ -57,7 +57,9 @@ export default class UserApplication extends Component {
                 appl_id: ''
             })
         })
-        .catch((err) => console.log(err));
+        .catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
     }
     handleChange(event)
     {

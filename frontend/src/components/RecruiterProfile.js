@@ -201,8 +201,9 @@ export default class Recruitment extends Component
         }).then((response) => {
             alert("Successfully updated profile");
             console.log(response);
-        }).catch((err) => console.log(err));
-        this.executeStuff();
+        }).catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
     }
 
     componentDidMount()

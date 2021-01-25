@@ -122,7 +122,9 @@ export default class ViewEmployees extends Component
                 appl_id: ''
             }, this.executeStuff())
         })
-        .catch(err => console.log(err))
+        .catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
     }
 
     sortrating(event)

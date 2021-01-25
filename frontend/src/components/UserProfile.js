@@ -18,6 +18,7 @@ export default class UserProfile extends Component
             skills: [],
             num_skill:null,
             edit: false,
+            ex_skill:'',
             skills_initial : ['C', 'C++', 'Javascript', 'Python'],
             touched: {
                 firstname : false,
@@ -44,6 +45,19 @@ export default class UserProfile extends Component
         this.handleSubmit = this.handleSubmit.bind(this);
         this.validateSubmit = this.validateSubmit.bind(this);
         this.validate = this.validate.bind(this);
+        this.extraSkill = this.extraSkill.bind(this);
+    }
+
+    extraSkill()
+    {
+        if(this.state.edit === false)
+            return false;
+        var val = this.state.skills_initial;
+        val.push(this.state.ex_skill);
+        this.setState({
+            skills_initial: val,
+            ex_skill: ''
+        })
     }
 
     validateSubmit()
@@ -176,7 +190,9 @@ export default class UserProfile extends Component
         }).then((response) => {
             alert("Successfully updated profile");
             console.log(response);
-        }).catch((err) => console.log(err));
+        }).catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
         this.executeStuff();
     }
 
@@ -528,6 +544,10 @@ export default class UserProfile extends Component
                         {button4}
                         </Col>
                     </FormGroup>
+                    <FormGroup row>
+                       <Input type="text" name="ex_skill" value={this.state.ex_skill} onChange={this.handleChange} ></Input>
+                       <Button onClick={this.extraSkill}>Add skill to dropdown</Button>
+                   </FormGroup>
                     <FormGroup row>
                         <Col md={{size:3, offset:3}}>
                         < Button  onClick={this.handleEdit}>Edit</Button>

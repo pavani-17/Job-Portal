@@ -213,7 +213,9 @@ export default class CreateJob extends Component
                     max_applications: false,
                     skills: [false]
                 }})
-        }).catch((err) => console.log(err));
+        }).catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
     }
     handleChange(event)
     {

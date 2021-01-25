@@ -35,7 +35,9 @@ export default class Login extends Component
                     alert("Login successful");
                     window.location.replace("/applicant/dashboard");
                 }
-            }).catch((err) => console.log(err));
+            }).catch((error) => {
+                alert(JSON.stringify(error.response));
+            })
         }
         else if(this.state.type==="Recruiter")
         {
@@ -53,7 +55,9 @@ export default class Login extends Component
                     alert("Login successful");
                     window.location.replace("/recruiter/dashboard");
                 }
-            }).catch((err) => console.log(err));
+            }).catch((error) => {
+                alert(JSON.stringify(error.response));
+            })
         }
         
     }

@@ -86,6 +86,9 @@ export default class ViewApplicant extends Component
             this.executeStuff();
             this.render();
         })
+        .catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
     }
 
     executeStuff()
