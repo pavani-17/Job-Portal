@@ -40,6 +40,7 @@ app.use(passport.initialize());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.static(__dirname));
 app.use('/applicants', applicantRouter);
 app.use('/recruiters', recruitmentRouter);
 app.use('/signup', signupRouter);
