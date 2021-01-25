@@ -9,7 +9,7 @@ const Applicants = require('../models/applicants');
 const { verifyApplicant, verifyRecruiter } = require('../authenticate');
 
 const textFileFiler = (req, file, cb) => {
-    if(!file.originalname.match(/\.(pdf|docx|txt)$/)) {
+    if(!file.originalname.match(/\.(pdf)$/)) {
         return cb(new Error('You can upload only text files!'), false);
     }
     cb(null, true);

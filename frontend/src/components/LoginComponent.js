@@ -56,7 +56,7 @@ export default class Login extends Component
                     window.location.replace("/recruiter/dashboard");
                 }
             }).catch((error) => {
-                alert(JSON.stringify(error.response));
+                alert(JSON.stringify(error));
             })
         }
         

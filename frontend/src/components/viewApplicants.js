@@ -20,6 +20,26 @@ export default class ViewApplicant extends Component
         this.sortname = this.sortname.bind(this);
         this.sortdate = this.sortdate.bind(this);
         this.sortrating = this.sortrating.bind(this);
+        this.downloadResume = this.downloadResume.bind(this);
+    }
+
+    downloadResume(event)
+    {
+        var id = event.target.id;
+        event.preventDefault();
+        window.open('http://localhost:3000/download/'+id);
+        // axios({
+        //     method: "GET",
+        //     url: 'http://localhost:3000/download/'+id,
+        //     data: null,
+        //     headers: {
+        //         'Content-Type' : 'application/json'
+        //     }
+        // })
+        // .then((response) => console.log(response))
+        // .catch((error) => {
+        //     alert(JSON.stringify(error.response));
+        // })
     }
 
     sortname(event)
@@ -140,6 +160,7 @@ export default class ViewApplicant extends Component
             });
             var button;
             var button2;
+            var button3 = <Button id={application.user_id._id} onClick={this.downloadResume}>Download Resume</Button>
             if(application.status === "Applied")
             {
                 button = <Button id={application._id} name="Shortlisted" onClick={this.handleSubmit}> Shortlist </Button>
@@ -163,6 +184,7 @@ export default class ViewApplicant extends Component
                       <CardText>{application.user_id.rating}</CardText>
                       {button}
                       {button2}
+                      {button3}
                     </Card>
                     </Col>
                 </Row>
