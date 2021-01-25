@@ -236,9 +236,13 @@ export default class UserProfile extends Component
                 'Content-Type' : 'multipart/formdata'
             }}
 
-        }).then((response) => console.log(response))
-        .catch((err) => console.log(err))
-      };
+        }).then((response) => {
+            alert("Uploaded profile picture successfully");
+        })
+        .catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
+      }; 
       
       onFileUpload_r = (event) => { 
         event.preventDefault();
@@ -263,8 +267,12 @@ export default class UserProfile extends Component
                 'Content-Type' : 'multipart/formdata'
             }}
 
-        }).then((response) => console.log(response))
-        .catch((err) => console.log(err))
+        }).then((response) => {
+            alert("Uploaded resume successfully");
+        })
+        .catch((error) => {
+            alert(JSON.stringify(error.response));
+        })
       }; 
   
 

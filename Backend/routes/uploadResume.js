@@ -7,7 +7,6 @@ const path = require('path');
 const router = express.Router();
 const Applicants = require('../models/applicants');
 const { verifyApplicant, verifyRecruiter } = require('../authenticate');
-const Applications = require('../models/applications');
 
 const textFileFiler = (req, file, cb) => {
     if(!file.originalname.match(/\.(pdf|docx|txt)$/)) {
@@ -25,13 +24,18 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({storage: storage });
+const upload = multer({storage: storage, fileFilter: textFileFiler });
 
 router.route('/')
 .post(verifyApplicant, upload.single('textFile'), (req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json(req.file);
+    Applicants.findByIdAndUpdate(req.user._id, {resume: true})
+    .then(() => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(req.file);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+    
 })
 
 module.exports = router

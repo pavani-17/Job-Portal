@@ -70,7 +70,7 @@ const applicantSchema = new Schema(
     },
     profilePic: {
         type: Boolean,
-        default: true
+        default: false
     }
     },
     {

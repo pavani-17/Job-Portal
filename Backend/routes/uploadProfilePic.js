@@ -24,13 +24,17 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({storage: storage });
+const upload = multer({storage: storage, fileFilter: imageFileFilter });
 
 router.route('/')
 .post(verifyApplicant, upload.single('imageFile'), (req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json(req.file);
+    Applicants.findByIdAndUpdate(req.user._id, {profilePic: true})
+    .then(() => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(req.file);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 })
 
 module.exports = router
