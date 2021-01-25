@@ -15,7 +15,8 @@ export default class Logout extends Component
     handleSubmit()
     {
         this.props.attemptLogout();
-        window.location.replace("/login");
+        alert("Logout Successful");
+        window.location.replace("/home");
     }
 
     displayNavbar()

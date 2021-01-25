@@ -13,6 +13,8 @@ var signupRouter = require('./routes/signup');
 var jobRouter = require('./routes/jobs');
 var applicationRouter = require('./routes/applications');
 
+const PORT = 4000;
+
 // Connect to the database
 const url = 'mongodb://localhost:27017/jobPortal';
 const connect = mongoose.connect(url);

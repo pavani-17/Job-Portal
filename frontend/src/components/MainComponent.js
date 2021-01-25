@@ -13,6 +13,7 @@ import ViewApplicant from './viewApplicants';
 import ViewEmployees from './viewEmployees';
 import PrivateRoute from './PrivateRoute';
 import Logout from './LogOutComponent';
+import Home from './HomeComponent';
 
 export default class Main extends Component {
     constructor(){
@@ -85,6 +86,7 @@ export default class Main extends Component {
             <div className="App">
                 <BrowserRouter>
                     <Switch>
+                        <Route path='/home' component={Home} />
                         <Route path='/register' component={Register} />
                         <Route path='/login' component={() => <Login attemptLogin={this.attemptLogin} />} />
                         <Route path='/recruiter/createJob'  

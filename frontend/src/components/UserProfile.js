@@ -174,6 +174,7 @@ export default class UserProfile extends Component
                 'Content-Type' : 'application/json',
             }
         }).then((response) => {
+            alert("Successfully updated profile");
             console.log(response);
         }).catch((err) => console.log(err));
         this.executeStuff();
@@ -463,7 +464,7 @@ export default class UserProfile extends Component
         {
             ski_list.push(
                 <FormGroup row>
-                    <Label htmlFor="skills" md={2}></Label>
+                    <Label htmlFor="skills" md={2}>Skills</Label>
                     <Col md={3}>
                     <Input type="select" id={i} name={i} value={this.state.skills[i]} onChange={this.handleSkillChange} onBlur={this.handleBlurSkill(i)} valid={errors.skills[i] === ''} invalid={errors.skills[i] !== ''}>{skills_list}</Input>
                     <FormFeedback>{errors.skills[i]}</FormFeedback>

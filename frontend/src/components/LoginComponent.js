@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row } from 'reactstrap';
 import axios from 'axios';
-
+import NavbarDefault from './LoggedOutNav';
 export default class Login extends Component
 {
     constructor(props)
@@ -30,7 +30,11 @@ export default class Login extends Component
                 }
             }).then((response) => {
                 if(response.data.success === true)
+                {
                     this.props.attemptLogin(response.data.token, response.data.user_id, this.state.type);
+                    alert("Login successful");
+                    window.location.replace("/applicant/dashboard");
+                }
             }).catch((err) => console.log(err));
         }
         else if(this.state.type==="Recruiter")
@@ -44,7 +48,11 @@ export default class Login extends Component
                 }
             }).then((response) => {
                 if(response.data.success === true)
-                this.props.attemptLogin(response.data.token, response.data.user_id, this.state.type);
+                {
+                    this.props.attemptLogin(response.data.token, response.data.user_id, this.state.type);
+                    alert("Login successful");
+                    window.location.replace("/recruiter/dashboard");
+                }
             }).catch((err) => console.log(err));
         }
         
@@ -64,6 +72,7 @@ export default class Login extends Component
     {
         return(
             <div className="container">
+                <NavbarDefault/>
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="type" md={2}>Type of User</Label>

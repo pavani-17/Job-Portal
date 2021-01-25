@@ -81,6 +81,7 @@ export default class ViewApplicant extends Component
             }
         })
         .then((response) => {
+            alert("Operation Successful");
             console.log(response);
             this.executeStuff();
             this.render();

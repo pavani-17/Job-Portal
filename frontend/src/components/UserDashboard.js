@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody, Table } from 'reactstrap';
 import NavbarUser from './NavbarUser';
+import Fuse from 'fuse.js';
 
 export default class UserDashboard extends Component {
     constructor()
@@ -22,6 +23,7 @@ export default class UserDashboard extends Component {
             isModalOpen: false,
             job_id:'',
             sop:'',
+            search: ''
         }
         this.sort = this.sort.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -31,6 +33,33 @@ export default class UserDashboard extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.executeStuff = this.executeStuff.bind(this);
         this.handleClear = this.handleClear.bind(this);
+        this.validateSubmit = this.validateSubmit.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
+    }
+
+    handleSearch()
+    {
+        var temp = this.state.displayed_arr;
+        const fuse = new Fuse(temp, {
+            keys: [
+                'job_title'
+            ]
+        });
+        temp = fuse.search(this.state.search);
+        console.log(temp);
+        var results = temp.map((val) => val.item);
+        this.setState({
+            displayed_arr: results
+        })
+    }
+
+    validateSubmit()
+    {
+        if(this.state.sop === '')
+        {
+            alert("Please enter the SOP before submitting");
+            return false;
+        }
     }
 
     handleChange(event)
@@ -49,6 +78,10 @@ export default class UserDashboard extends Component {
     }
     handleSubmit(event)
     {
+        if(this.validateSubmit() === false)
+        {
+            return;
+        }
         var temp={};
         temp.job_id = this.state.job_id;
         temp.sop = this.state.sop;
@@ -63,6 +96,7 @@ export default class UserDashboard extends Component {
         })
         .then((response) =>  {
             console.log(response);
+            alert("Applied successfully");
             this.executeStuff();
             this.toggleModal();
         })
@@ -218,6 +252,10 @@ export default class UserDashboard extends Component {
     {
         let jobtemp = Array.from(this.state.displayed_arr);
         let data = jobtemp.map((job) => {
+            if(new Date(job.deadline) - new Date(Date.now()) < 0)
+                return null;
+            if(job.rem_positions === 0)
+                return null;
             var button;
             if(job.state === "Apply")
             {
@@ -306,6 +344,11 @@ export default class UserDashboard extends Component {
                         <Button onClick={this.handleClear}>Clear</Button>
                         </Col>
                         </FormGroup>
+                </Form>
+                <Form>
+                    <Input type="text" name="search" value={this.state.search} onChange={this.handleChange}></Input>
+                    <Button onClick={this.handleSearch}>Search</Button>
+                    <Button onClick={this.handleClear}>Clear</Button>
                 </Form>
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader toggle={this.toggleModal}>Apply</ModalHeader>

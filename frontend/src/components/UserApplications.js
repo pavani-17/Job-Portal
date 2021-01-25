@@ -19,10 +19,23 @@ export default class UserApplication extends Component {
         this.toggleModal = this.toggleModal.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.validateSubmit = this.validateSubmit.bind(this);
+    }
+
+    validateSubmit()
+    {
+        if(this.state.rating === 'Select a Rating')
+        {
+            alert("Please select a rating");
+            return false;
+        }
+        return true;
     }
 
     handleSubmit(event)
     {
+        if(this.validateSubmit() === false)
+            return;
         var temp = this.state.job_id;
         var rat = this.state.rating;
         var id = this.state.appl_id;
@@ -35,6 +48,7 @@ export default class UserApplication extends Component {
                 'Content-Type' : 'application/json',
             }
         }).then((response) => {
+            alert("Rated successfully");
             console.log(response);
             this.setState({
                 rating:'Select a Rating',

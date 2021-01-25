@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row } from 'reactstrap';
 import axios from 'axios';
-
+import NavbarDefault from './LoggedOutNav';
 
 export default class Register extends Component
 {
@@ -16,6 +16,7 @@ export default class Register extends Component
             password: '',
             phone: '',
             bio: '',
+            ex_skill: '',
             education: [{education_name:'', education_start:'', education_end:''}],
             num_ed: 1,
             skills: ['Select a skill'],
@@ -46,6 +47,17 @@ export default class Register extends Component
         this.validateApplicant = this.validateApplicant.bind(this);
         this.validateRecruiter = this.validateRecruiter.bind(this);
         this.validateSubmit = this.validateSubmit.bind(this);
+        this.extraSkill = this.extraSkill.bind(this);
+    }
+
+    extraSkill()
+    {
+        var val = this.state.skills_initial;
+        val.push(this.state.ex_skill);
+        this.setState({
+            skills_initial: val,
+            ex_skill: ''
+        })
     }
 
     validateSubmit()
@@ -283,7 +295,11 @@ export default class Register extends Component
                 }
             }).then((response) => {
                 console.log(response);
-            }).catch((err) => console.log(err));
+                alert("Your registration is successful");
+                window.location.replace("/login");
+            }).catch((error) => {
+                alert(JSON.stringify(error.response));
+            });
         }
         else if(this.state.type==="Recruiter")
         {
@@ -296,7 +312,11 @@ export default class Register extends Component
                 }
             }).then((response) => {
                 console.log(response);
-            }).catch((err) => console.log(err));
+                alert("Your registration is successful");
+                window.location.replace("/login");
+            }).catch((res) => {
+                console.log(res);
+            });
         }
         
     }
@@ -420,7 +440,8 @@ export default class Register extends Component
         temp1['skills'].pop();
         this.setState({
             skills: temp,
-            num_skill: t_num
+            num_skill: t_num,
+            touched: temp1
         });
     }
 
@@ -494,6 +515,10 @@ export default class Register extends Component
                        {button3} {button4}
                    </FormGroup>
                    <FormGroup row>
+                       <Input type="text" name="ex_skill" value={this.state.ex_skill} onChange={this.handleChange} ></Input>
+                       <Button onClick={this.extraSkill}>Add skill to dropdown</Button>
+                   </FormGroup>
+                   <FormGroup row>
                         <Label htmlFor="profilePic" md={2}>Profile Picture</Label>
                         <Col md={10}>
                             <Input type="file"/>
@@ -516,14 +541,14 @@ export default class Register extends Component
                     <FormGroup row>
                         <Label htmlFor="phone" md={2}>Contact Number</Label>
                         <Col md={10}>
-                            <Input type="tel" id="phone" name="phone" placeholder="Contact Number" onChange={this.handleChange} onBlur={this.handleBlur('phone')} valid={errors.phone===''} invalid={errors.phone !== ''}/>
+                            <Input type="tel" id="phone" name="phone" placeholder="Contact Number" value={this.state.phone} onChange={this.handleChange} onBlur={this.handleBlur('phone')} valid={errors.phone===''} invalid={errors.phone !== ''}/>
                             <FormFeedback>{errors.phone}</FormFeedback>
                         </Col>
                     </FormGroup>
                     <FormGroup row>
                         <Label htmlFor="bio" md={2}>Your Bio</Label>
                         <Col md={10}>
-                            <Input type="textarea" id="bio" name="bio" rows="6" onChange={this.handleChange} onBlur={this.handleBlur('bio')} valid={errors.bio===''} invalid={errors.bio !== ''} />
+                            <Input type="textarea" id="bio" name="bio" rows="6" onChange={this.handleChange} value={this.state.bio} onBlur={this.handleBlur('bio')} valid={errors.bio===''} invalid={errors.bio !== ''} />
                             <FormFeedback>{errors.bio}</FormFeedback>
                         </Col>
                     </FormGroup>
@@ -542,6 +567,8 @@ export default class Register extends Component
         const errors = this.validate(this.state.firstname, this.state.lastname, this.state.email, this.state.password, this.state.type);
         return(
             <div className="container">
+                <NavbarDefault/>
+                <h1>Create a New User</h1>
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>

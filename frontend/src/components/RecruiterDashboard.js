@@ -19,6 +19,33 @@ export default class RecruiterDashboard extends Component
         this.handleChange = this.handleChange.bind(this); 
         this.handleSubmit = this.handleSubmit.bind(this); 
         this.deleteJob = this.deleteJob.bind(this);
+        this.validateSubmit = this.validateSubmit.bind(this);
+    }
+
+    validateSubmit()
+    {
+        console.log(this.state.cur_job.deadline);
+        if(this.state.cur_job.deadline === '')
+        {
+            alert("Please select the new Deadline as Deadline is compulsory");
+            return false;
+        }
+        if(new Date(this.state.cur_job.deadline) - new Date(Date.now()) < 0)
+        {
+            alert("Deadline must be after the current date and time");
+            return false;
+        }
+        if(this.state.cur_job.max_applications === '' || this.state.cur_job.max_applications <= 0)
+        {
+            alert("Maximum applications is compulsory and must be positive. Make sure the number is higher than current number of applicants");
+            return false;
+        }
+        if(this.state.cur_job.max_positions === '' || this.state.cur_job.max_positions <= 0)
+        {
+            alert("Maximum positions is compulsory and must be positive. Make sure the number is higher than current number of accepted applicants");
+            return false;
+        }
+        return true;
     }
 
     deleteJob(event)
@@ -34,6 +61,7 @@ export default class RecruiterDashboard extends Component
         })
         .then((response) => {
             console.log(response);
+            alert("Deletion successful");
             this.executeStuff();
             this.render();
         })
@@ -69,12 +97,14 @@ export default class RecruiterDashboard extends Component
                 cur_job: '',
                 min_applications:'',
                 min_positions:'0'
-            })
+            }, this.executeStuff());
         }
     }
 
     handleSubmit(event)
     {
+        if(this.validateSubmit() === false)
+            return;
         var job = this.state.cur_job;
         axios({
             method:"PUT",
@@ -86,6 +116,7 @@ export default class RecruiterDashboard extends Component
         })
         .then((response) => {
             console.log(response);
+            alert("Edit successful");
             this.executeStuff();
         })
         .catch((err) => console.log(err));
@@ -161,7 +192,7 @@ export default class RecruiterDashboard extends Component
                         <FormGroup row>
                         <Label htmlFor="deadline" md={2}>Deadline</Label>
                         <Col md={10}>
-                            <Input type="timedate-local" id="deadline" name="deadline" rows="deadline" onChange={this.handleChange} value={this.state.cur_job.deadline} ></Input>
+                            <Input type="datetime-local" id="deadline" name="deadline" rows="deadline" onChange={this.handleChange} value={this.state.cur_job.deadline} ></Input>
                         </Col>
                     </FormGroup>
                     <FormGroup row>

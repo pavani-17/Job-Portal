@@ -1,6 +1,8 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var nodemailer = require('nodemailer');
+
 
 const router = express.Router();
 const Applicants = require('../models/applicants');
@@ -9,8 +11,15 @@ const Applications = require('../models/applications');
 const { verifyRecruiter, verifyApplicant } = require('../authenticate');
 const { application } = require('express');
 
-router.use(bodyParser.json());
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'jobportal.dass@gmail.com',
+      pass: 'Dass_assignment'
+    }
+  });
 
+router.use(bodyParser.json());
 
 router.get('/job/:jobId', verifyRecruiter, (req,res,next) => {
     Jobs.findById(req.params.jobId).populate('user_id')
@@ -128,12 +137,12 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
     if(req.body.status.toString() === "Selected")
     {
         Applications.findById(req.params.appId).populate('user_id')
-        .then((application) => {
-            Applicants.findByIdAndUpdate(application.user_id._id, {num_applications : 0, selected: true})
+        .then((appl) => {
+            Applicants.findByIdAndUpdate(appl.user_id._id, {num_applications : 0, selected: true})
             .then(() => {
                 Applications.findById(req.params.appId)
                 .then((application) => {
-                    Jobs.findByIdAndUpdate(application.job_id, {$inc: {"rem_positions": -1}}, {new: true})
+                    Jobs.findByIdAndUpdate(application.job_id, {$inc: {"rem_positions": -1}}, {new: true}).populate('user_id')
                     .then((job) => {
                         var cur_date = Date.now();
                         Applications.updateMany({user_id: application.user_id}, {status: "Rejected"})
@@ -141,29 +150,42 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
                             Applications.findByIdAndUpdate(req.params.appId,{$set: {"status": req.body.status, "joining_date": cur_date}}, {new: true})
                             .then((application) => {
                                 console.log(job.rem_positions);
-                                if(job.rem_positions === 0)
-                                {
-                                    var appl_status = ["Applied", "Shortlisted"];
-                                    Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"}, {new:true})
-                                    .then((x) => {
-                                        appl_id = x.map((app) => {return app.user_id});
-                                        Applicants.updateMany({_id: {"$in": appl_id}}, {$inc: {"num_applications": -1}})
-                                        .then(()=> {
-                                            console.log("Value of x is"+x);
-                                            res.statusCode = 200;
-                                            res.setHeader('Content-Type', 'application/json');
-                                            res.json(application);
+                                var mailOptions = {
+                                    from: 'jobportal.dass@gmail.com',
+                                    to: `${appl.user_id.email}`,
+                                    subject: 'Job selection',
+                                    text: 'You have been selected by '+ job.user_id.firstname +" (recruiter) for (job) " + job.job_title
+                                }
+                                console.log(mailOptions);
+                                transporter.sendMail(mailOptions)
+                                .then((info) => {
+                                    console.log(info);
+                                    if(job.rem_positions === 0)
+                                    {
+                                        var appl_status = ["Applied", "Shortlisted"];
+                                        Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"}, {new:true})
+                                        .then((x) => {
+                                            console.log(x);
+                                            appl_id = x.map((app) => {return app.user_id});
+                                            Applicants.updateMany({_id: {"$in": appl_id}}, {$inc: {"num_applications": -1}})
+                                            .then(()=> {
+                                                console.log("Value of x is"+x);
+                                                res.statusCode = 200;
+                                                res.setHeader('Content-Type', 'application/json');
+                                                res.json(application);
+                                            }, (err) => next(err))
+                                            .catch((err) => next(err));
                                         }, (err) => next(err))
                                         .catch((err) => next(err));
-                                    }, (err) => next(err))
-                                    .catch((err) => next(err));
-                                }
-                                else
-                                {
-                                    res.statusCode = 200;
-                                    res.setHeader('Content-Type', 'application/json');
-                                    res.json(application);
-                                }
+                                    }
+                                    else
+                                    {
+                                        res.statusCode = 200;
+                                        res.setHeader('Content-Type', 'application/json');
+                                        res.json(application);
+                                    }
+                                }, err => next(err))
+                                .catch((err) => next(err))
                             }, (err) => next(err))
                             .catch((err) => next(err))
                         }, (err) => next(err))

@@ -99,6 +99,11 @@ export default class ViewEmployees extends Component
     {
         var appl_id = this.state.appl_id;
         var rat = this.state.rating;
+        if(rat === "Select a Rating")
+        {
+            alert("Please select a rating before submitting");
+            return;
+        }
         rat = {"rating":rat, "application_id":appl_id};
         axios({
             method:"POST",
@@ -109,6 +114,7 @@ export default class ViewEmployees extends Component
             }
         })
         .then((response) => {
+            alert("Rated successfully");
             console.log(response);
             this.setState({
                 rating: 'Select a Rating',
