@@ -160,7 +160,10 @@ export default class ViewApplicant extends Component
             });
             var button;
             var button2;
-            var button3 = <Button id={application.user_id._id} onClick={this.downloadResume}>Download Resume</Button>
+            if(application.user_id.resume === true)
+                var button3 = <Button id={application.user_id._id} onClick={this.downloadResume}>Download Resume</Button>
+            else
+                var button3 = <Button>Resume not available</Button>
             if(application.status === "Applied")
             {
                 button = <Button id={application._id} name="Shortlisted" onClick={this.handleSubmit}> Shortlist </Button>
