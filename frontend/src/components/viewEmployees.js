@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody, NavbarText } from 'reactstrap';
+import {Button, Form, FormGroup, Label, Input, Col,Row, Card, CardText, Modal, ModalHeader, ModalBody, CardTitle } from 'reactstrap';
 import NavbarRecruitment from './NavbarRecruiter';
 
 export default class ViewEmployees extends Component
@@ -181,19 +180,31 @@ export default class ViewEmployees extends Component
     render()
     {
         var temp_appl = Array.from(this.state.applications);
+    
         temp_appl = temp_appl.map((application,i) => {
-            
+            var button ;
+            if(application.rated_user === false)
+            {
+                button = <Button id={application._id} onClick={this.toggleModal} color="primary">Rate</Button>
+            }        
+            else
+            {
+                button = <Button>Already rated</Button>
+            }
             return(
                 <Row>
                     <Col>
                     <Card body>
-                      <CardText>{application.job_id.job_title}</CardText>
-                      <CardText>{application.user_id.firstname} {application.user_id.lastname}</CardText>
-                      <CardText> {application.job_id.job_type}</CardText>
-                      <CardText>{application.job_id.salary}</CardText>
-                      <CardText>{application.status}</CardText>
-                      <CardText>{application.user_id.rating}</CardText>
-                      <Button id={application._id} onClick={this.toggleModal}>Rate</Button>
+                      <CardTitle tag="h5">{application.job_id.job_title}</CardTitle>
+                      <CardText>Name: {application.user_id.firstname} {application.user_id.lastname}</CardText>
+                      <CardText>Date of Joining: {application.joining_date}</CardText>
+                      <CardText>Job Type: {application.job_id.job_type}</CardText>
+                      <CardText>Job Salary: {application.job_id.salary}</CardText>
+                      <CardText>Rating: {application.user_id.rating}</CardText>
+                      <Col md={{size:4, offset:4}}>
+                      {button}
+                      </Col>
+                      
                     </Card>
                     </Col>
                 </Row>
@@ -202,6 +213,7 @@ export default class ViewEmployees extends Component
         return(
             <div className="container">
                 <NavbarRecruitment />
+                <h2>View Employees</h2>
                 {temp_appl}
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader toggle={this.toggleModal}>Rate</ModalHeader>

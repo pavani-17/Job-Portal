@@ -163,16 +163,20 @@ router.put('/:appId', verifyRecruiter, (req, res, next) => {
                                     if(job.rem_positions === 0)
                                     {
                                         var appl_status = ["Applied", "Shortlisted"];
-                                        Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"}, {new:true})
+                                        Applications.find({job_id: job._id, status: {"$in": appl_status}})
                                         .then((x) => {
-                                            console.log(x);
-                                            appl_id = x.map((app) => {return app.user_id});
-                                            Applicants.updateMany({_id: {"$in": appl_id}}, {$inc: {"num_applications": -1}})
-                                            .then(()=> {
-                                                console.log("Value of x is"+x);
-                                                res.statusCode = 200;
-                                                res.setHeader('Content-Type', 'application/json');
-                                                res.json(application);
+                                            Applications.updateMany({job_id: job._id, status: {"$in": appl_status}}, {"status":"Rejected"}, {new:true})
+                                            .then(() => {
+                                                console.log(x);
+                                                appl_id = x.map((app) => {return app.user_id});
+                                                Applicants.updateMany({_id: {"$in": appl_id}}, {$inc: {"num_applications": -1}})
+                                                .then(()=> {
+                                                    console.log("Value of x is"+x);
+                                                    res.statusCode = 200;
+                                                    res.setHeader('Content-Type', 'application/json');
+                                                    res.json(application);
+                                                }, (err) => next(err))
+                                                .catch((err) => next(err));
                                             }, (err) => next(err))
                                             .catch((err) => next(err));
                                         }, (err) => next(err))

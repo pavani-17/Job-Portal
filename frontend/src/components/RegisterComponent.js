@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap';
 import axios from 'axios';
 import NavbarDefault from './LoggedOutNav';
 
@@ -514,7 +514,10 @@ export default class Register extends Component
                        {button3} {button4}
                    </FormGroup>
                    <FormGroup row>
+                       <Label md={2} htmlFor="extra_ed">Add education</Label>
+                       <Col md={10}>
                        <Input type="text" name="ex_skill" value={this.state.ex_skill} onChange={this.handleChange} ></Input>
+                       </Col>
                        <Button onClick={this.extraSkill}>Add skill to dropdown</Button>
                    </FormGroup>
                 </div>
@@ -555,7 +558,7 @@ export default class Register extends Component
         return(
             <div className="container">
                 <NavbarDefault/>
-                <h1>Create a New User</h1>
+                <h2>Create a New User</h2>
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>

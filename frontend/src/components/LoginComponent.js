@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col} from 'reactstrap';
 import axios from 'axios';
 import NavbarDefault from './LoggedOutNav';
 export default class Login extends Component
@@ -77,6 +77,7 @@ export default class Login extends Component
         return(
             <div className="container">
                 <NavbarDefault/>
+                <h2>Login</h2>
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="type" md={2}>Type of User</Label>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody, NavbarText } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col,Row, Card, CardTitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import NavbarUser from './NavbarUser';
 
 export default class UserApplication extends Component {
@@ -56,6 +55,7 @@ export default class UserApplication extends Component {
                 job_id: '',
                 appl_id: ''
             })
+            window.location.reload();
         })
         .catch((error) => {
             alert(JSON.stringify(error.response));
@@ -124,23 +124,28 @@ export default class UserApplication extends Component {
             if(application.status === "Selected" && application.rated === false)
             {
                 button =  (
-                        <Button id={application.job_id._id} name={application._id} onClick={this.toggleModal}>Rate</Button>
+                        <Button id={application.job_id._id} name={application._id} onClick={this.toggleModal} color="danger">Rate</Button>
                 );
-            }            
+            }      
+            var join_date = "Not available";
+            if(application.joining_date != null)
+            {
+                join_date = application.joining_date;
+            }      
             return(
             <Row>
                 <Col>
                     <Card body>
                       <CardTitle tag="h5">{application.job_id.job_title}</CardTitle>
-                      <CardText>Id : {application.job_id._id}</CardText>
-                      <CardText>Skills : {application.job_id.skills}</CardText>
-                      <CardText>Duration: {application.job_id.duration}</CardText>
                       <CardText>Salary: {application.job_id.salary}</CardText>
                       <CardText>Type of Job : {application.job_id.job_type}</CardText>
-                      <CardText>{application.job_id.user_id.firstname} {application.job_id.user_id.lastname}</CardText>
-                      <CardText>{application.job_id.user_id.email}</CardText>
-                      <CardText>{application.status}</CardText>
-                      {button}
+                      <CardText>Recruiter Name: {application.job_id.user_id.firstname} {application.job_id.user_id.lastname}</CardText>
+                      <CardText>Recruiter Email: {application.job_id.user_id.email}</CardText>
+                      <CardText>Joining Date: {join_date}</CardText>
+                      <Col md={{size:4, offset:4}}>
+                      <Button color="primary">{application.status}</Button>
+                      </Col>                      
+                      <Col md={{size:4, offset:4}}> {button}</Col>
                     </Card>
                 </Col>
             </Row>
@@ -149,6 +154,7 @@ export default class UserApplication extends Component {
         return(
             <div className="container">
                 <NavbarUser />
+                <h2>Applications</h2>
                 {appl_temp}
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader toggle={this.toggleModal}>Rate</ModalHeader>
@@ -170,7 +176,7 @@ export default class UserApplication extends Component {
                     </FormGroup>
                     <FormGroup row>
                         <Col md={{size:3, offset:3}}>
-                        <   Button  onClick={this.handleSubmit}>Submit</Button>
+                        <  Button  onClick={this.handleSubmit}>Submit</Button>
                         </Col>
                     </FormGroup>
                         </Form>

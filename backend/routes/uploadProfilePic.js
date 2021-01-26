@@ -5,7 +5,7 @@ var multer = require('multer');
 const path = require('path');
 
 const router = express.Router();
-const { verifyApplicant, verifyRecruiter } = require('../authenticate');
+const { verifyApplicant } = require('../authenticate');
 const Applicants = require('../models/applicants');
 
 const imageFileFilter = (req, file, cb) => {

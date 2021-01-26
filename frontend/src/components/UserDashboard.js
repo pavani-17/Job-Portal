@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody, Table } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col,Row, Card, CardTitle, CardText, Modal, ModalHeader, ModalBody} from 'reactstrap';
 import NavbarUser from './NavbarUser';
 import Fuse from 'fuse.js';
 
@@ -259,29 +258,39 @@ export default class UserDashboard extends Component {
             var button;
             if(job.state === "Apply")
             {
-                button = <Button id={job._id} onClick={this.toggleModal}>{job.state}</Button>
+                button = <Button id={job._id} onClick={this.toggleModal} color="success">{job.state}</Button>
             }
-            else
+            else if(job.state === "Applied")
             {
-                button = <Button id={job._id}>{job.state}</Button>
+                button = <Button id={job._id} color="primary">{job.state}</Button>
             }
+            else if(job.state === "Full")
+            {
+                button = <Button id={job._id} color="danger">{job.state}</Button>
+            }
+            var skil_list = job.skills.map((skill) => {
+                return <p>{skill}</p>
+            });
                 return(
                     <Row>
                     <Col>
                     <Card body>
-                      <CardTitle tag="h5">{job.job_title}</CardTitle>
-                      <CardText>Id : {job._id}</CardText>
-                      <CardText>Skills : {job.skills}</CardText>
+                      <CardTitle tag="h4">{job.job_title}</CardTitle>
+                      <CardText>Recruiter Name: {job.user_id.firstname} {job.user_id.lastname}</CardText>
+                      <CardText>Recruiter Email: {job.user_id.email}</CardText>
+                      <CardText tag="h5">Skills</CardText>
+                      {skil_list}
                       <CardText>Deadline : {job.deadline}</CardText>
                       <CardText>Duration: {job.duration}</CardText>
                       <CardText>Salary: {job.salary}</CardText>
                       <CardText>Remaining Applications : {job.rem_applications}</CardText>
                       <CardText>Remaining Positions : {job.rem_positions}</CardText>
                       <CardText>Type of Job : {job.job_type}</CardText>
-                      <CardText>{job.user_id.firstname} {job.user_id.lastname}</CardText>
-                      <CardText>{job.user_id.email}</CardText>
+                      
                       <CardText>{job.rating}</CardText>
+                      <Col md={{size:4,offset:4}}>
                       {button}
+                      </Col>
                     </Card>
                   </Col>
                   </Row>
@@ -290,6 +299,7 @@ export default class UserDashboard extends Component {
         return(
             <div className="container">
                 <NavbarUser />
+                <h2>User Dashboard</h2>
                 {data}
                 <FormGroup row>
                 <Col md={{size:6, offset:3}}> <Button row name="sortsalary" id="salary" onClick={this.sort}>Sort By Salary</Button></Col>
@@ -302,7 +312,16 @@ export default class UserDashboard extends Component {
                 </FormGroup>
                 <Form>
                     <FormGroup row>
-                        <Label htmlFor="job_type" md={2}>Job Type</Label>
+                    <Label htmlFor="search" md={4} >Search</Label>
+                        <Col md={3}>
+                        <Input type="text" name="search" value={this.state.search} onChange={this.handleChange}></Input>
+                        </Col>
+                    </FormGroup>
+                    
+                    <Button onClick={this.handleSearch}>Search</Button>                </Form>
+                <Form>
+                    <FormGroup row>
+                        <Label htmlFor="job_type" md={4}>Job Type</Label>
                         <Col md={3}>
                             <Input type="select" name="job_type" id="job_type" value={this.state.job_type} onChange={this.handleChange}>
                                 <option selected disabled> Select Type</option> 
@@ -313,14 +332,14 @@ export default class UserDashboard extends Component {
                         </Col>
                         </FormGroup>
                         <FormGroup row>
-                            <Label htmlFor="salary" md={2}>Salary</Label>
-                            <Col md={{size:3, offset:2}}>
+                            <Label htmlFor="salary" md={4}>Salary</Label>
+                            <Col md={3}>
                                 <Input type="number" name="begin_sal"value={this.state.begin_sal} onChange={this.handleChange}></Input>
                                 <Input type="number" name="end_sal"value={this.state.end_sal} onChange={this.handleChange}></Input>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
-                        <Label htmlFor="duration" md={2}>Duration</Label>
+                        <Label htmlFor="duration" md={4}>Duration</Label>
                         <Col md={3}>
                             <Input type="select" name="duration" id="duration" value={this.state.duration} onChange={this.handleChange}>
                                 <option selected disabled> Select Duration</option> 
@@ -345,11 +364,7 @@ export default class UserDashboard extends Component {
                         </Col>
                         </FormGroup>
                 </Form>
-                <Form>
-                    <Input type="text" name="search" value={this.state.search} onChange={this.handleChange}></Input>
-                    <Button onClick={this.handleSearch}>Search</Button>
-                    <Button onClick={this.handleClear}>Clear</Button>
-                </Form>
+                
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader toggle={this.toggleModal}>Apply</ModalHeader>
                     <ModalBody>
@@ -362,7 +377,7 @@ export default class UserDashboard extends Component {
                     </FormGroup>
                     <FormGroup row>
                         <Col md={{size:3, offset:3}}>
-                        <   Button  onClick={this.handleSubmit}>Submit</Button>
+                        <Button  onClick={this.handleSubmit} color="primary">Submit</Button>
                         </Col>
                     </FormGroup>
                         </Form>

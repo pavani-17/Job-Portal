@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap';
 import NavbarRecruitment from './NavbarRecruiter';
 export default class Recruitment extends Component
 {
@@ -216,7 +215,9 @@ export default class Recruitment extends Component
         var errors = this.validate(this.state.firstname, this.state.lastname, this.state.email);
         return(
             <div className="container">
+                
                 <NavbarRecruitment />
+                <h2>Profile</h2>
                 <Form>
                 <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>

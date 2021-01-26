@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Button, FormGroup,  Col,Row, Card, CardText} from 'reactstrap';
 import NavbarRecruitment from './NavbarRecruiter';
 
 export default class ViewApplicant extends Component
@@ -75,7 +74,7 @@ export default class ViewApplicant extends Component
     sortrating(event)
     {
         var temp = this.state.applications;
-        var t = this.state.sortname;
+        var t = this.state.sortrating;
         temp.sort(function(a,b)
         {
             return(a.user_id.rating - b.user_id.rating)*(1-2*t);
@@ -92,6 +91,10 @@ export default class ViewApplicant extends Component
         var id = event.target.id;
         var data = {};
         data.status = name;
+        if(event.target.name === "Selected")
+        {
+            alert("Updating status. This operation might take a while. Kindly wait");
+        }
         axios({
             method: "PUT",
             url:"http://localhost:3000/applications/"+id,
@@ -160,34 +163,47 @@ export default class ViewApplicant extends Component
             });
             var button;
             var button2;
+            var button3;
             if(application.user_id.resume === true)
-                var button3 = <Button id={application.user_id._id} onClick={this.downloadResume}>Download Resume</Button>
+                button3 = <Button id={application.user_id._id} onClick={this.downloadResume} color="primary">Download Resume</Button>
             else
-                var button3 = <Button>Resume not available</Button>
+                button3 = <Button>Resume not available</Button>
             if(application.status === "Applied")
             {
-                button = <Button id={application._id} name="Shortlisted" onClick={this.handleSubmit}> Shortlist </Button>
-                button2 = <Button id={application._id} name="Rejected" onClick={this.handleSubmit}>Reject</Button>
+                button = <Button id={application._id} name="Shortlisted" onClick={this.handleSubmit} color="success"> Shortlist </Button>
+                button2 = <Button id={application._id} name="Rejected" onClick={this.handleSubmit} color="danger">Reject</Button>
             }
             else if(application.status === "Shortlisted")
             {
-                button = <Button id={application._id} name="Selected" onClick={this.handleSubmit}>Accept</Button>
-                button2 = <Button id={application._id} name="Rejected" onClick={this.handleSubmit}>Reject</Button>
+                button = <Button id={application._id} name="Selected" onClick={this.handleSubmit} color="success">Accept</Button>
+                button2 = <Button id={application._id} name="Rejected" onClick={this.handleSubmit} color="danger">Reject</Button>
             }
             return(
                 <Row>
                     <Col>
                     <Card body>
-                      <CardText>{application.user_id.firstname}</CardText>
-                      <CardText> {application.user_id.lastname}</CardText>
-                      <CardText>{application.application_date}</CardText>
-                      <CardText>{skills_list}</CardText>
-                      <CardText>{ed_list}</CardText>
-                      <CardText>{application.status}</CardText>
-                      <CardText>{application.user_id.rating}</CardText>
+                      <CardText>Name: {application.user_id.firstname} {application.user_id.lastname}</CardText>
+                      <CardText>Date of Application: {application.application_date}</CardText>
+                      <CardText>Rating: {application.user_id.rating}</CardText>
+                      <CardText>SOP: {application.sop}</CardText>
+                      <CardText tag="h5">Skills</CardText>
+                      {skills_list}
+                      <CardText tag="h5">Education</CardText>
+                      {ed_list}
+                      <CardText></CardText>
+                      <CardText tag="h5">{application.status}</CardText>
+                      <Col md={{size:4, offset:4}}>
                       {button}
-                      {button2}
+                      </Col>
+                      <CardText></CardText>
+                      <Col md={{size:4, offset:4}}>
+                      {button2}  
+                      </Col>
+                      <CardText></CardText>
+                      <Col md={{size:4, offset:4}}>
                       {button3}
+                      </Col>
+                     
                     </Card>
                     </Col>
                 </Row>
@@ -197,6 +213,7 @@ export default class ViewApplicant extends Component
         return(
             <div className="container">
                 <NavbarRecruitment />
+                <h2>View Applications</h2>
                 {temp_appl}
                 <FormGroup row>
                 <Col md={{size:6, offset:3}}> <Button row name="name" id="name" onClick={this.sortname}>Sort By Name</Button></Col>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row } from 'reactstrap';
+import { Button} from 'reactstrap';
 import NavbarUser from './NavbarUser';
 import NavbarRecruitment from './NavbarRecruiter';
 
@@ -37,6 +37,7 @@ export default class Logout extends Component
         return(
             <div className="container">
                 {dis}
+                <h2>Log Out</h2>
                 <p> Are you sure you want to logout :( ?</p>
                 <Button onClick={this.handleSubmit}>LogOut</Button>
             </div>

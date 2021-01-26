@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { Nav, Navbar, NavbarBrand, NavbarToggler, Collapse, NavItem, Jumbotron, Button, Modal, ModalBody, ModalHeader, Form, FormGroup, Label, Input } from 'reactstrap';
-import { NavLink, Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import NavbarDefault from './LoggedOutNav';
 
 export default class Home extends Component

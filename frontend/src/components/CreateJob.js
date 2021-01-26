@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap';
 import axios from 'axios';
 import NavbarRecruitment from './NavbarRecruiter';
 
@@ -307,6 +306,7 @@ export default class CreateJob extends Component
         return (
             <div className="container">
                 <NavbarRecruitment />
+                <h2>Create a Job</h2>
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="job_title" md={2}>Job Title</Label>

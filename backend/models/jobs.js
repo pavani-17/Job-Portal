@@ -41,7 +41,8 @@ const jobSchema = new Schema({
     },
     job_title: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     duration : {
         type: Number,

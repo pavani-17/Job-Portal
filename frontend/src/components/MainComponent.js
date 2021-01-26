@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
+import {Switch, Route, Redirect, BrowserRouter} from 'react-router-dom';
 import Register from './RegisterComponent';
 import Login from './LoginComponent';
 import axios from 'axios';
@@ -74,7 +74,7 @@ export default class Main extends Component {
             if(this.state.isLoggedIn === false || this.state.type !== "Recruiter")
             {
                 return(
-                    <Redirect to="/login" />
+                    <Redirect to="/home" />
                 )
             }
             return(
@@ -82,13 +82,67 @@ export default class Main extends Component {
             );
         }
 
+        const LoginCheck = () => {
+            if(this.state.isLoggedIn === true)
+            {
+                if(this.state.type === "Recruiter")
+                {
+                   return <Redirect to="/recruiter/dashboard"/>
+                }
+                else
+                {
+                   return <Redirect to="/applicant/dashboard"/>
+                }
+            }
+            return <Login attemptLogin={this.attemptLogin} />
+        }
+
+        const LogoutCheck = () => {
+            if(this.state.isLoggedIn === true)
+            {
+                return <Logout type={this.state.type} attemptLogout={this.attemptLogout} />
+            }
+            else
+            {
+                return <Redirect to="/home"/>
+            }
+        }
+  
+        const HomeCheck = () => {
+            if(this.state.isLoggedIn === false)
+            {
+                return <Home />
+            }
+            else
+            {
+                if(this.state.type === "Recruiter")
+                {
+                    return <Redirect to="/recruiter/dashboard"/>
+                }
+                else
+                {
+                    return <Redirect to="/applicant/dashboard"/>
+                }
+            }
+        }
+
+        const RegisterCheck = () => {
+            if(this.state.isLoggedIn === false)
+            {
+                return <Register/>
+            }
+            else
+            {
+                return <Redirect to="/home"/>
+            }
+        }
         return(
             <div className="App">
                 <BrowserRouter>
                     <Switch>
-                        <Route path='/home' component={Home} />
-                        <Route path='/register' component={Register} />
-                        <Route path='/login' component={() => <Login attemptLogin={this.attemptLogin} />} />
+                        <Route path='/home' component={HomeCheck} />
+                        <Route path='/register' component={RegisterCheck} />
+                        <Route path='/login' component={LoginCheck} />
                         <Route path='/recruiter/createJob'  
                             render={
                                 (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Recruiter" path="/recruiter/createJob"  hasProps={false} component={CreateJob}/>
@@ -118,7 +172,8 @@ export default class Main extends Component {
                             render={
                                 (props) => <PrivateRoute {...props} isLoggedIn={this.state.isLoggedIn} type={this.state.type} desiredType="Recruiter" path="/recruiter/employees" hasProps={false} component={ViewEmployees} />
                             }/>
-                        <Route path='/logout' component={() => <Logout type={this.state.type} attemptLogout={this.attemptLogout}/>} />
+                        <Route path='/logout' component={LogoutCheck} />
+                        <Route path='/' component={HomeCheck} />
                     </Switch>
                 </BrowserRouter>
             </div>

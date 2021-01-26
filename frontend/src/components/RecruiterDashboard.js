@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col,Row, Card, CardTitle, CardText, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import NavbarRecruitment from './NavbarRecruiter';
 
 export default class RecruiterDashboard extends Component
@@ -164,19 +164,22 @@ export default class RecruiterDashboard extends Component
                 <Col>
                     <Card body>
                       <CardTitle tag="h5">{job.job_title}</CardTitle>
-                      <CardText>Id : {job._id}</CardText>
-                      <CardText>Skills : {job.skills}</CardText>
                       <CardText>Deadline : {job.deadline}</CardText>
                       <CardText>Duration: {job.duration}</CardText>
-                      <CardText>Salary: {job.salary}</CardText>
+                      <CardText>Creation Date: {job.createdAt}</CardText>
                       <CardText>Maximum Applications : {job.max_applications}</CardText>
                       <CardText>Maximum Positions : {job.max_positions}</CardText>
                       <CardText>Remaining Applications : {job.rem_applications}</CardText>
                       <CardText>Remaining Positions : {job.rem_positions}</CardText>
-                      <CardText>Type of Job : {job.job_type}</CardText>
-                      <Button id={i} onClick={this.toggleModal}>Edit</Button>
-                      <Button id={job._id} onClick={this.deleteJob}>Delete Job</Button>
-                      <Link to={`/recruiter/viewJob/${job._id}`}><Button> View Applications</Button> </Link>
+                      <Col md={{size:4, offset:4}}>
+                      <Button id={i} onClick={this.toggleModal} color="primary">Edit</Button>
+                      </Col>
+                      <CardText></CardText>
+                      <Col md={{size:4, offset:4}}>
+                      <Button id={job._id} onClick={this.deleteJob} color="danger">Delete Job</Button>
+                      </Col>                      
+                      <CardText></CardText>
+                      <Link to={`/recruiter/viewJob/${job._id}`}><Button color="success"> View Applications</Button> </Link>
                     </Card>
                 </Col>
             </Row>
@@ -186,6 +189,7 @@ export default class RecruiterDashboard extends Component
         return(
             <div className="container">
                 <NavbarRecruitment />
+                <h2>Recruiter Dashboard</h2>
                 {temp_job}
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal} >
                     <ModalHeader toggle={this.toggleModal}>Apply</ModalHeader>

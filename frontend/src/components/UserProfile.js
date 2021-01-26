@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Switch, Route, Redirect, withRouter, BrowserRouter} from 'react-router-dom';
 import axios from 'axios';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback,Row, Card, CardTitle, CardSubtitle, CardText, Modal, ModalHeader, ModalBody, NavbarText } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Col, FormFeedback} from 'reactstrap';
 import NavbarUser from './NavbarUser';
 
 export default class UserProfile extends Component
@@ -583,6 +582,7 @@ export default class UserProfile extends Component
         return(
             <div className="container">
                 <NavbarUser />
+                <h2>Profile</h2>
                 <Form>
                     <FormGroup row>
                         <Label htmlFor="firstname" md={2}>First Name</Label>
