@@ -4,16 +4,16 @@ A MERN application to connect recruiters and applicants.
 
 ### Instructions to run
 
-For the front end:
+For backend:
 ```
-$ cd frontend
+$ cd backend
 $ npm install
 $ npm start
 ```
 
-For backend:
+For the front end:
 ```
-$ cd backend
+$ cd frontend
 $ npm install
 $ npm start
 ```
